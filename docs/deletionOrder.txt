@@ -1,0 +1,8 @@
+reviews
+space_images
+space_amenities
+payments
+availabilities
+bookings
+spaces
+users
