@@ -9,7 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+import java.util.UUID;
 
 
 /**
@@ -21,11 +21,12 @@ import java.util.List;
 @Table(name = "users")
 public class User {
     /*
-     * Unique identifier for the user incremented by one
+     * Unique identifier
+     * Using UUID with GeneratedValue which supposed to work out of the box with UUID
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    private UUID id;
 
     /*
      * first name of the user
@@ -62,7 +63,7 @@ public class User {
      * User's phone number
      */
     @Size(max = 20)
-    @Column(name = "phone_number")
+    @Column( name = "phone_number", unique= true, nullable = false)
     private String phoneNumber;
 
     /*
@@ -117,8 +118,14 @@ public class User {
     private List<Review> reviewsGiven;
 
     // Constructors
+    /*
+     * Default constructor
+     */
     public User() {}
 
+    /*
+     * Creation constructor
+     */
     public User(String firstName, String lastName, String email, String password, UserRole role) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -128,8 +135,8 @@ public class User {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }

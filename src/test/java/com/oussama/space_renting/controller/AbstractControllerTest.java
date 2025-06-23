@@ -33,6 +33,10 @@ class AbstractControllerTest {
         @Override
         public void initialize(ConfigurableApplicationContext context) {
             Startables.deepStart(POSTGRES).join();
+            System.out.println( "Postgres container variables:");
+            System.out.println( POSTGRES.getJdbcUrl());
+            System.out.println( POSTGRES.getUsername());
+            System.out.println( POSTGRES.getPassword());
 
             context.getEnvironment()
                     .getPropertySources()

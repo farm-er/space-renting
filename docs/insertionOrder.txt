@@ -1,7 +1,6 @@
 users
 spaces
 bookings
-availabilities
 payments
 space_amenities
 space_images

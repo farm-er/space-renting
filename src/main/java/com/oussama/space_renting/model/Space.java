@@ -113,9 +113,6 @@ public class Space {
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews;
 
-    @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Availability> availabilities;
-
     // Constructors
     public Space() {}
 
@@ -217,6 +214,4 @@ public class Space {
     public List<Review> getReviews() { return reviews; }
     public void setReviews(List<Review> reviews) { this.reviews = reviews; }
 
-    public List<Availability> getAvailabilities() { return availabilities; }
-    public void setAvailabilities(List<Availability> availabilities) { this.availabilities = availabilities; }
 }
