@@ -6,8 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.rauschig.jarchivelib.ArchiverFactory;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.Container;
@@ -15,15 +15,38 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.DockerImageName;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+
+
 class SchemaSpyTest extends AbstractControllerTest {
 
+    @DisplayName( "Creating schema documentation with schema spy")
     @Test
     @SneakyThrows
     void schemaSpy() throws IOException {
 
+        assertThat(POSTGRES.isRunning())
+                .as("Postgres container must be running.")
+                .isTrue();
+
         final Path buildFolderPath = Path.of("docs").toAbsolutePath();
         Files.createDirectories(buildFolderPath);
-        System.out.println(buildFolderPath);
+
+        try (var files = Files.list(buildFolderPath)) {
+            files.forEach(file -> {
+                try {
+                    if (Files.isDirectory(file)) {
+                        // recursively delete directories
+                        deleteRecursively(file);
+                    } else {
+                        Files.deleteIfExists(file);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
 
         @Cleanup final var schemaSpy =
                 new GenericContainer<>(DockerImageName.parse("schemaspy/schemaspy:7.0.2"))
@@ -57,6 +80,9 @@ class SchemaSpyTest extends AbstractControllerTest {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+        schemaSpy.close();
+
         System.out.println("Exit code: " + result.getExitCode());
         System.out.println("STDOUT: " + result.getStdout());
         System.out.println("STDERR: " + result.getStderr());
@@ -64,7 +90,16 @@ class SchemaSpyTest extends AbstractControllerTest {
         System.out.println("Files in docs directory:");
         Files.list(buildFolderPath).forEach(System.out::println);
 
+    }
 
-
+    private void deleteRecursively(Path path) throws IOException {
+        if (Files.isDirectory(path)) {
+            try (var stream = Files.list(path)) {
+                for (Path entry : stream.toList()) {
+                    deleteRecursively(entry);
+                }
+            }
+        }
+        Files.deleteIfExists(path);
     }
 }

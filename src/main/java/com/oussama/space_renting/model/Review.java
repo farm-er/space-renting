@@ -18,7 +18,7 @@ public class Review {
     private Long id;
 
     @NotNull
-    @Min(1)
+    @Min(0)
     @Max(5)
     @Column(nullable = false)
     private Integer rating;
