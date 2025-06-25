@@ -1,96 +1,131 @@
 package com.oussama.space_renting.security;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
 
 @Component
 public class JwtUtil {
 
-    @Value( "${jwt.secret}")
-    private String jwtSecret;
-
-    @Value( "${jwt.expiration}")
-    private int jwtExpiration;
-
-    private SecretKey key;
-    @PostConstruct
-    public void init() {
-        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    /*
+     * Function to extract the sub of the token which is in our case an Email
+     */
+    public String extractEmail(String token) {
+        return extractClaim(token, Claims::getSubject);
     }
 
     /*
-     * Token generator
+     * Function to get expiration date
      */
-    public String generateToken(String username) {
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+
+    /*
+     * Function to extract specific field from the Token
+     */
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    /*
+     * Function for generating tokens without any claims
+     */
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, userDetails.getUsername());
+    }
+
+    /*
+     * Overloading the first one
+     * Generate a token with email + the provided claims
+     */
+    public String generateToken(UserDetails userDetails, Map<String, Object> extraClaims) {
+        return createToken(extraClaims, userDetails.getUsername());
+    }
+
+    /*
+     * Function to validate the token and check if the user provided is the owner
+     */
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        final String email = extractEmail(token);
+        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    /*
+     * Function to check if the token is valid without checking the owner
+     */
+    public Boolean validateToken(String token) {
+        try {
+            extractAllClaims(token);
+            return !isTokenExpired(token);
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+
+    /*
+     * Secret and Expiration in ms from the config file
+     */
+
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Value("${jwt.expiration}")
+    private Long expiration;
+
+    /*
+     * Function to get HMAC-SHA key using the string key from spring boot configuration file
+     */
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    /*
+     * Function to construct the token
+     * gets a map of claims plus the sub field ( email in our case) and adds them to the token
+     * sets the creation and expiration dates
+     * then signs it and return it
+     */
+    private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
-                .subject(username)
-                .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + jwtExpiration))
-                .signWith(key)
+                .claims(claims)
+                .subject(subject)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSigningKey())
                 .compact();
     }
 
     /*
-     * Extracts all claims from token
+     * Function to extract all claims from the Token
      */
-    public Claims getAllClaimsFromToken(String token) {
+    private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .verifyWith(key)
+                .verifyWith(getSigningKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
     }
 
     /*
-     * Extracts expiration date
+     * Checks if the token's expiration date is older than the current day
      */
-    public Date getExpirationDateFromToken(String token) {
-        return Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getExpiration();
+    private Boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
     }
-
-    /*
-     * Checks if token is expired
-     */
-    public boolean isTokenExpired(String token) {
-        Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
-    }
-
-    /*
-     * Function to validate Jwt Token
-     */
-    public boolean validateJwtToken(String token) {
-        try {
-            Jwts.parser()
-                    .verifyWith(key)
-                    .build()
-                    .parseSignedClaims(token);
-            return true;
-        } catch (SecurityException e) {
-            System.out.println("Invalid JWT signature: " + e.getMessage());
-        } catch (MalformedJwtException e) {
-            System.out.println("Invalid JWT token: " + e.getMessage());
-        } catch (ExpiredJwtException e) {
-            System.out.println("JWT token is expired: " + e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            System.out.println("JWT token is unsupported: " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            System.out.println("JWT claims string is empty: " + e.getMessage());
-        }
-        return false;
-    }
-
-
 }

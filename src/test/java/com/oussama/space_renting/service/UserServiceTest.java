@@ -30,13 +30,15 @@ public class UserServiceTest {
     @DisplayName("Should return user with the provided id")
     @Test
     public void testGetUserById_Found() {
-        User user = new User(
-                "first name",
-                "last name",
-                "email@gmail.com",
-                "password",
-                UserRole.USER
-        );
+
+        User user = User.builder()
+                .firstName("first name")
+                .lastName("last name")
+                .email("email@gmail.com")
+                .password("password")
+                .role(UserRole.USER)
+                .build();
+
         UUID id = UUID.randomUUID();
         Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
 
@@ -66,14 +68,14 @@ public class UserServiceTest {
     public void testGetUserByEmail_Found() {
         UUID id = UUID.randomUUID();
         String email = "email@gmail.com";
-        User user = new User(
-                "first name",
-                "last name",
-                email,
-                "password",
-                UserRole.USER
-        );
-        user.setId( id);
+        User user = User.builder()
+                .id(id)
+                .firstName("first name")
+                .lastName("last name")
+                .email(email)
+                .password("password")
+                .role(UserRole.USER)
+                .build();
         Mockito.when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
 
         User result = userService.getUserByEmail(email);
@@ -108,7 +110,7 @@ public class UserServiceTest {
         assertTrue( result);
     }
 
-    @DisplayName("Should return true for the existing email")
+    @DisplayName("Should return false for the not existing email")
     @Test
     public void testExistsByEmail_NotExists() {
         String email = "email@gmail.com";
@@ -117,4 +119,22 @@ public class UserServiceTest {
         assertFalse( result);
     }
 
+
+    @DisplayName("Should return true for the existing phone number")
+    @Test
+    public void testExistsByPhoneNumber_Exists() {
+        String phoneNumber = "12345678";
+        Mockito.when( userRepository.existsByPhoneNumber( phoneNumber)).thenReturn( true);
+        boolean result = userService.existsByPhoneNumber( phoneNumber);
+        assertTrue( result);
+    }
+
+    @DisplayName("Should return false for the not existing phone number")
+    @Test
+    public void testExistsByPhoneNumber_NotExists() {
+        String phoneNumber = "12345678";
+        Mockito.when( userRepository.existsByPhoneNumber( phoneNumber)).thenReturn( false);
+        boolean result = userService.existsByPhoneNumber( phoneNumber);
+        assertFalse( result);
+    }
 }

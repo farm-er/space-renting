@@ -59,6 +59,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Using it to create Docs for the api -->
@@ -186,6 +187,25 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.14.0</version>
+				<configuration>
+					<source>24</source>
+					<target>24</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</path>
+					</annotationProcessorPaths>
+					<compilerArgs>
+						<arg>-parameters</arg>
+					</compilerArgs>
+				</configuration>
 			</plugin>
 
 		</plugins>

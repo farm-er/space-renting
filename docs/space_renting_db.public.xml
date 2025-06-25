@@ -47,7 +47,7 @@
          <index name="uknuscjm6x127hkb15kcb8n56wo" unique="true">
             <column ascending="true" name="booking_id"/>
          </index>
-         <checkConstraint constraint="(((payment_method)::text = ANY ((ARRAY['CREDIT_CARD'::character varying, 'DEBIT_CARD'::character varying, 'PAYPAL'::character varying, 'BANK_TRANSFER'::character varying, 'CASH'::character varying])::text[])))" name="payments_payment_method_check"/>
+         <checkConstraint constraint="(((payment_method)::text = ANY ((ARRAY['CASH'::character varying, 'STRIPE'::character varying])::text[])))" name="payments_payment_method_check"/>
          <checkConstraint constraint="(((status)::text = ANY ((ARRAY['PENDING'::character varying, 'COMPLETED'::character varying, 'FAILED'::character varying])::text[])))" name="payments_status_check"/>
       </table>
       <table name="reviews" remarks="" schema="public" type="TABLE">
@@ -66,7 +66,7 @@
          <index name="reviews_pkey" unique="true">
             <column ascending="true" name="id"/>
          </index>
-         <checkConstraint constraint="(((rating &lt;= 5) AND (rating &gt;= 0)))" name="reviews_rating_check"/>
+         <checkConstraint constraint="(((rating &lt;= 5) AND (rating &gt;= 1)))" name="reviews_rating_check"/>
       </table>
       <table name="space_amenities" remarks="" schema="public" type="TABLE">
          <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="space_id" nullable="false" remarks="" size="19" type="int8" typeCode="-5">

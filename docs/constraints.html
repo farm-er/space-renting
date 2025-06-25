@@ -279,7 +279,7 @@
                                     <tr>
                                         <td><a href='tables/reviews.html'>reviews</a></td>
                                         <td>reviews_rating_check</td>
-                                        <td>(((rating &lt;&#61; 5) AND (rating &gt;&#61; 0)))</td>
+                                        <td>(((rating &lt;&#61; 5) AND (rating &gt;&#61; 1)))</td>
                                     </tr>
                                     <tr>
                                         <td><a href='tables/bookings.html'>bookings</a></td>
@@ -289,7 +289,7 @@
                                     <tr>
                                         <td><a href='tables/payments.html'>payments</a></td>
                                         <td>payments_payment_method_check</td>
-                                        <td>(((payment_method)::text &#61; ANY ((ARRAY[&#39;CREDIT_CARD&#39;::character varying, &#39;DEBIT_CARD&#39;::character varying, &#39;PAYPAL&#39;::character varying, &#39;BANK_TRANSFER&#39;::character varying, &#39;CASH&#39;::character varying])::text[])))</td>
+                                        <td>(((payment_method)::text &#61; ANY ((ARRAY[&#39;CASH&#39;::character varying, &#39;STRIPE&#39;::character varying])::text[])))</td>
                                     </tr>
                                     <tr>
                                         <td><a href='tables/payments.html'>payments</a></td>
