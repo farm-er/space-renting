@@ -110,7 +110,7 @@ public class UserServiceTest {
         assertTrue( result);
     }
 
-    @DisplayName("Should return true for the existing email")
+    @DisplayName("Should return false for the not existing email")
     @Test
     public void testExistsByEmail_NotExists() {
         String email = "email@gmail.com";
@@ -119,4 +119,22 @@ public class UserServiceTest {
         assertFalse( result);
     }
 
+
+    @DisplayName("Should return true for the existing phone number")
+    @Test
+    public void testExistsByPhoneNumber_Exists() {
+        String phoneNumber = "12345678";
+        Mockito.when( userRepository.existsByPhoneNumber( phoneNumber)).thenReturn( true);
+        boolean result = userService.existsByPhoneNumber( phoneNumber);
+        assertTrue( result);
+    }
+
+    @DisplayName("Should return false for the not existing phone number")
+    @Test
+    public void testExistsByPhoneNumber_NotExists() {
+        String phoneNumber = "12345678";
+        Mockito.when( userRepository.existsByPhoneNumber( phoneNumber)).thenReturn( false);
+        boolean result = userService.existsByPhoneNumber( phoneNumber);
+        assertFalse( result);
+    }
 }
