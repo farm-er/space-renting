@@ -73,7 +73,11 @@ public class SecurityConfig {
                 // Exceptions when it comes to applying Auth Filters
                 .authorizeHttpRequests(authz -> authz
                         // If we needed to allow another version we can add it here
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers(
+                                "/api/v1/auth/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 // We don't need sessions with jwt

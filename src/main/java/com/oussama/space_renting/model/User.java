@@ -56,7 +56,7 @@ public class User {
     /*
      * Unique email of the user
      */
-    @Email
+    @Email( message= "invalid email", regexp = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     @NotBlank
     @Column(unique = true, nullable = false)
     private String email;

@@ -78,14 +78,12 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
-        // TODO: check all the fields with proper validation
         if (userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity
                     .badRequest()
                     .body("Email is already taken");
         }
 
-        // TODO: populate the user with the validated data
         // Create user entity
         User user = User.builder()
                 .firstName( request.getFirstName())
