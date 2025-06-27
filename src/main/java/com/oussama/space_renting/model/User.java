@@ -1,5 +1,6 @@
 package com.oussama.space_renting.model;
 
+import com.oussama.space_renting.model.space.Space;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -109,12 +110,6 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    /*
-     * Owned spaces
-     */
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Space> ownedSpaces;
 
     /*
      * Bookings done by this user
