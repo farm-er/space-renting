@@ -42,7 +42,6 @@ public class UserRepositoryTest {
                 .email("john.doe@example.com")
                 .password("123")
                 .phoneNumber("123456789")
-                .role(UserRole.USER)
                 .isVerified(false)
                 .isActive(true)
                 .build();
@@ -78,7 +77,6 @@ public class UserRepositoryTest {
                 .email("john.doe@example.com")
                 .password("123")
                 .phoneNumber("123456789")
-                .role(UserRole.USER)
                 .isVerified(false)
                 .isActive(true)
                 .build();

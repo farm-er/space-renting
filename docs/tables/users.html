@@ -272,23 +272,6 @@
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td><span id="role">role</span></td>
-                                    <td>varchar</td>
-                                    <td>255</td>
-                                    <td title=''></td>
-                                    <td title=''></td>
-                                    <td>null</td>
-                                    <td>
-                                        <table border='0' cellspacing='0' cellpadding='0'>
-                                        </table>
-                                    </td>
-                                    <td>
-                                        <table border='0' cellspacing='0' cellpadding='0'>
-                                        </table>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
                                     <td><span id="updated_at">updated_at</span></td>
                                     <td>timestamp</td>
                                     <td>29,6</td>
@@ -359,38 +342,6 @@
                     </div>
                     <div class="box box-primary">
                         <div class="box-header with-border">
-                            <i class="fa fa-sitemap"></i>
-                            <h3 class="box-title">Check Constraints</h3>
-                            <div class="box-tools pull-right">
-                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                            </div>
-                        </div>
-                        <div class="box-body">
-                            <table
-                                    id="check_table"
-                                    class="table table-bordered table-striped dataTable"
-                                    role="grid"
-                                    data-paging="true"
-                                    data-page-length="10"
-                                    data-length-change="false">
-                                <thead align='left'>
-                                <tr>
-                                    <th>Constraint Name</th>
-                                    <th>Constraint</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>users_role_check</td>
-                                    <td>(((role)::text &#61; ANY ((ARRAY[&#39;ADMIN&#39;::character varying, &#39;USER&#39;::character varying])::text[])))</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="box box-primary">
-                        <div class="box-header with-border">
                             <i class="fa fa-code-fork"></i>
                             <h3 id="Relationships" class="box-title">Relationships</h3>
                             <div class="box-tools pull-right">
@@ -409,18 +360,18 @@
                                     <div class="chart tab-pane active" id="oneDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
 <area shape="rect" id="node1" href="bookings.html" target="_top" title="bookings" alt="" coords="389,5,632,181">
-<area shape="rect" id="node2" href="users.html" target="_top" title="users" alt="" coords="5,128,345,520">
+<area shape="rect" id="node2" href="users.html" target="_top" title="users" alt="" coords="5,128,345,491">
 <area shape="rect" id="node3" href="reviews.html" target="_top" title="reviews" alt="" coords="430,199,591,375">
 </map>
                                         <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/users.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
                                     <div class="chart tab-pane " id="twodegreesDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="bookings.html" target="_top" title="bookings" alt="" coords="389,24,632,200">
-<area shape="rect" id="node2" href="users.html" target="_top" title="users" alt="" coords="5,5,345,397">
-<area shape="rect" id="node3" href="spaces.html" target="_top" title="spaces" alt="" coords="100,415,251,503">
-<area shape="rect" id="node4" href="payments.html" target="_top" title="payments" alt="" coords="676,27,856,115">
-<area shape="rect" id="node5" href="reviews.html" target="_top" title="reviews" alt="" coords="430,263,591,439">
+<area shape="rect" id="node1" href="bookings.html" target="_top" title="bookings" alt="" coords="389,17,632,193">
+<area shape="rect" id="node2" href="users.html" target="_top" title="users" alt="" coords="5,5,345,368">
+<area shape="rect" id="node3" href="spaces.html" target="_top" title="spaces" alt="" coords="100,385,251,473">
+<area shape="rect" id="node4" href="payments.html" target="_top" title="payments" alt="" coords="676,20,856,108">
+<area shape="rect" id="node5" href="reviews.html" target="_top" title="reviews" alt="" coords="430,248,591,424">
 </map>
                                         <a name='diagram'><img id="twodegreesDegreeImg" src="../diagrams/tables/users.2degrees.png" usemap="#twoDegreesRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>

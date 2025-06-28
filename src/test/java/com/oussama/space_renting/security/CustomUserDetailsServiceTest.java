@@ -38,7 +38,6 @@ public class CustomUserDetailsServiceTest {
          */
         Mockito.when(user.getEmail()).thenReturn( email);
         Mockito.when(user.getPassword()).thenReturn( password);
-        Mockito.when(user.getRole()).thenReturn( UserRole.USER);
 
         Mockito.when(userRepository.findByEmail(email)).thenReturn( Optional.of( user));
 

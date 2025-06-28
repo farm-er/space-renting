@@ -75,23 +75,24 @@
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="address" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="amenities" nullable="true" remarks="" size="255" type="varchar" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="2" id="3" name="area" nullable="true" remarks="" size="8" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="3" name="area" nullable="false" remarks="" size="8" type="numeric" typeCode="2"/>
          <column autoUpdated="false" defaultValue="null" digits="6" id="4" name="available_in" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="capacity" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="city" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="country" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="6" id="8" name="created_at" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="description" nullable="false" remarks="" size="2000" type="varchar" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="image_urls" nullable="true" remarks="" size="255" type="varchar" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="is_active" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="12" name="is_available" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
-         <column autoUpdated="false" defaultValue="null" digits="8" id="13" name="latitude" nullable="true" remarks="" size="10" type="numeric" typeCode="2"/>
-         <column autoUpdated="false" defaultValue="null" digits="8" id="14" name="longitude" nullable="true" remarks="" size="11" type="numeric" typeCode="2"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="15" name="name" nullable="false" remarks="" size="200" type="varchar" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="16" name="postal_code" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="2" id="17" name="price_per_hour" nullable="false" remarks="" size="10" type="numeric" typeCode="2"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="18" name="space_type" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="6" id="19" name="updated_at" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="10" name="discount" nullable="true" remarks="" size="3" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="image_urls" nullable="true" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="12" name="is_active" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="13" name="is_available" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="8" id="14" name="latitude" nullable="true" remarks="" size="10" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="8" id="15" name="longitude" nullable="true" remarks="" size="11" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="16" name="name" nullable="false" remarks="" size="200" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="17" name="postal_code" nullable="true" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="18" name="price_per_hour" nullable="false" remarks="" size="10" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="19" name="space_type" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="20" name="updated_at" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="spaces_pkey" unique="true">
             <column ascending="true" name="id"/>
@@ -111,8 +112,7 @@
          <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="last_name" nullable="false" remarks="" size="100" type="varchar" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="password" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="phone_number" nullable="false" remarks="" size="20" type="varchar" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="role" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="6" id="10" name="updated_at" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="9" name="updated_at" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="users_pkey" unique="true">
             <column ascending="true" name="id"/>
@@ -123,7 +123,6 @@
          <index name="uk9q63snka3mdh91as4io72espi" unique="true">
             <column ascending="true" name="phone_number"/>
          </index>
-         <checkConstraint constraint="(((role)::text = ANY ((ARRAY['ADMIN'::character varying, 'USER'::character varying])::text[])))" name="users_role_check"/>
       </table>
    </tables>
 </database>

@@ -36,7 +36,6 @@ public class UserServiceTest {
                 .lastName("last name")
                 .email("email@gmail.com")
                 .password("password")
-                .role(UserRole.USER)
                 .build();
 
         UUID id = UUID.randomUUID();
@@ -74,7 +73,6 @@ public class UserServiceTest {
                 .lastName("last name")
                 .email(email)
                 .password("password")
-                .role(UserRole.USER)
                 .build();
         Mockito.when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
 
