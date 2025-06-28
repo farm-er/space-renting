@@ -77,13 +77,6 @@ public class User {
     private String phoneNumber;
 
     /*
-     * User role can be Renter or Owner
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole role;
-
-    /*
      * is the account verified
      */
     @Builder.Default
