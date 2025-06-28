@@ -343,12 +343,12 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>payments_payment_method_check</td>
-                                    <td>(((payment_method)::text &#61; ANY ((ARRAY[&#39;CASH&#39;::character varying, &#39;STRIPE&#39;::character varying])::text[])))</td>
-                                </tr>
-                                <tr>
                                     <td>payments_status_check</td>
                                     <td>(((status)::text &#61; ANY ((ARRAY[&#39;PENDING&#39;::character varying, &#39;COMPLETED&#39;::character varying, &#39;FAILED&#39;::character varying])::text[])))</td>
+                                </tr>
+                                <tr>
+                                    <td>payments_payment_method_check</td>
+                                    <td>(((payment_method)::text &#61; ANY ((ARRAY[&#39;CASH&#39;::character varying, &#39;STRIPE&#39;::character varying])::text[])))</td>
                                 </tr>
                                 </tbody>
                             </table>

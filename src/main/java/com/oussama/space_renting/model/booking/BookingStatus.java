@@ -1,4 +1,4 @@
-package com.oussama.space_renting.model;
+package com.oussama.space_renting.model.booking;
 
 public enum BookingStatus {
     PENDING,

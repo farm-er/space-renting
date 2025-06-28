@@ -1,5 +1,6 @@
-package com.oussama.space_renting.model;
+package com.oussama.space_renting.model.payment;
 
+import com.oussama.space_renting.model.booking.Booking;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

@@ -3,3 +3,5 @@ users
 bookings
 payments
 reviews
+managers
+staff

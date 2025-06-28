@@ -43,7 +43,6 @@ public class UserRepositoryTest {
                 .password("123")
                 .phoneNumber("123456789")
                 .isVerified(false)
-                .isActive(true)
                 .build();
 
         userRepository.save(user);
@@ -78,7 +77,6 @@ public class UserRepositoryTest {
                 .password("123")
                 .phoneNumber("123456789")
                 .isVerified(false)
-                .isActive(true)
                 .build();
 
         userRepository.save(user);

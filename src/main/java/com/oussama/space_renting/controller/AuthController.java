@@ -46,6 +46,7 @@ public class AuthController {
     /*
      * This endpoint is for Login
      * To get a new token based on credentials
+     * TODO: check if the user is verified before giving the token
      */
     @PostMapping("/user/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {

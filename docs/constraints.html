@@ -247,6 +247,11 @@
                                         <td>spaces_space_type_check</td>
                                         <td>(((space_type)::text &#61; ANY ((ARRAY[&#39;OFFICE&#39;::character varying, &#39;MEETING_ROOM&#39;::character varying, &#39;COWORKING_SPACE&#39;::character varying, &#39;EVENT_SPACE&#39;::character varying, &#39;CONFERENCE_ROOM&#39;::character varying, &#39;WORKSHOP_SPACE&#39;::character varying])::text[])))</td>
                                     </tr>
+                                    <tr>
+                                        <td><a href='tables/staff.html'>staff</a></td>
+                                        <td>staff_status_check</td>
+                                        <td>(((status &gt;&#61; 0) AND (status &lt;&#61; 1)))</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
