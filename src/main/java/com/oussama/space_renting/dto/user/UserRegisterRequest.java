@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import com.oussama.space_renting.model.User.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 
 @Getter
@@ -31,7 +32,5 @@ public class UserRegisterRequest {
     @NotBlank(message = "Phone number is required")
     @Size(max = 20)
     private final String phoneNumber;
-
-    private final UserRole role = UserRole.USER;
 
 }

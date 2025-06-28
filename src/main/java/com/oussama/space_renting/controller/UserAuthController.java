@@ -9,6 +9,7 @@ import com.oussama.space_renting.repository.UserRepository;
 import com.oussama.space_renting.security.JwtUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,33 +22,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1/auth/users")
 @CrossOrigin
 public class UserAuthController {
 
-    private final UserRepository userRepository;
-
-    private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    public UserAuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     /*
      * This endpoint is for Login
      * To get a new token based on credentials
      */
-    @PostMapping("/user/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserLoginRequest loginRequest) {
         try {
             /*
@@ -80,7 +64,7 @@ public class UserAuthController {
      * Endpoint for registering the account
      * Checks for already user email, phone number
      */
-    @PostMapping("/user/register")
+    @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserRegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity
@@ -97,7 +81,7 @@ public class UserAuthController {
                 .phoneNumber( request.getPhoneNumber())
                 // true for now .. we need to add email verification after
                 // and maybe also phone number verification
-                .isVerified( true)
+                .isVerified( false)
                 .build();
 
 
@@ -124,4 +108,25 @@ public class UserAuthController {
             return ResponseEntity.badRequest().body("Invalid token format");
         }
     }
+
+    private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    @Qualifier("userDetailsService")
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public UserAuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+
 }
