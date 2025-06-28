@@ -1,4 +1,4 @@
-package com.oussama.space_renting.model;
+package com.oussama.space_renting.model.review;
 
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.model.space.Space;

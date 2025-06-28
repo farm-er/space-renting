@@ -1,8 +1,8 @@
 package com.oussama.space_renting.security;
 
 import com.oussama.space_renting.model.User.User;
-import com.oussama.space_renting.model.User.UserRole;
 import com.oussama.space_renting.repository.UserRepository;
+import com.oussama.space_renting.security.custom_user_details.CustomUserDetailsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

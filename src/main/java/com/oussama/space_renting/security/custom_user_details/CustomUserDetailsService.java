@@ -1,4 +1,4 @@
-package com.oussama.space_renting.security;
+package com.oussama.space_renting.security.custom_user_details;
 
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.repository.UserRepository;
@@ -10,11 +10,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service("staffDetailsService")
-public class CustomStaffDetailsService implements UserDetailsService {
+@Service("userDetailsService")
+public class CustomUserDetailsService implements UserDetailsService {
+
     private final UserRepository userRepository;
 
-    public CustomStaffDetailsService(UserRepository userRepository) {
+    public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -34,4 +35,5 @@ public class CustomStaffDetailsService implements UserDetailsService {
                 List.of(new SimpleGrantedAuthority("USER"))
         );
     }
+
 }

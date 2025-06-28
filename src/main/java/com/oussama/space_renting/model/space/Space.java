@@ -1,7 +1,7 @@
 package com.oussama.space_renting.model.space;
 
-import com.oussama.space_renting.model.Booking;
-import com.oussama.space_renting.model.Review;
+import com.oussama.space_renting.model.booking.Booking;
+import com.oussama.space_renting.model.review.Review;
 import com.oussama.space_renting.util.AmenitySetConverter;
 import com.oussama.space_renting.util.StringListConverter;
 import jakarta.persistence.*;

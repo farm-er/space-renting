@@ -12,11 +12,7 @@ import java.util.UUID;
 @Service
 public class UserService {
 
-    @Autowired
     private final UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     /*
      * Getting user by id

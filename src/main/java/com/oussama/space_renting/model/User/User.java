@@ -1,7 +1,7 @@
 package com.oussama.space_renting.model.User;
 
-import com.oussama.space_renting.model.Booking;
-import com.oussama.space_renting.model.Review;
+import com.oussama.space_renting.model.booking.Booking;
+import com.oussama.space_renting.model.review.Review;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -43,7 +43,7 @@ public class User {
      * first name of the user
      */
     @NotBlank
-    @Size(max = 100)
+    @Size(max = 50)
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
@@ -51,7 +51,7 @@ public class User {
      * last name of the user
      */
     @NotBlank
-    @Size(max = 100)
+    @Size(max = 50)
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
@@ -83,13 +83,6 @@ public class User {
     @Builder.Default
     @Column(name = "is_verified", nullable = false)
     private Boolean isVerified = false;
-
-    /*
-     * is the user active
-     */
-    @Builder.Default
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
 
     /*
      * Account creation time

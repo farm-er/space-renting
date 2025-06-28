@@ -2,13 +2,14 @@ package com.oussama.space_renting.controller;
 
 
 import com.oussama.space_renting.dto.AuthResponse;
-import com.oussama.space_renting.dto.LoginRequest;
-import com.oussama.space_renting.dto.RegisterRequest;
+import com.oussama.space_renting.dto.user.UserLoginRequest;
+import com.oussama.space_renting.dto.user.UserRegisterRequest;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.repository.UserRepository;
 import com.oussama.space_renting.security.JwtUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,34 +22,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1/auth/users")
 @CrossOrigin
-public class AuthController {
+public class UserAuthController {
 
-    private final UserRepository userRepository;
-
-    private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     /*
      * This endpoint is for Login
      * To get a new token based on credentials
      */
-    @PostMapping("/user/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginRequest loginRequest) {
         try {
             /*
              * Authenticate the user using the authentication created by the provider
@@ -62,7 +46,7 @@ public class AuthController {
             );
         } catch (BadCredentialsException e) {
             return ResponseEntity.badRequest()
-                    .body(new AuthResponse("Invalid credentials", null));
+                    .body( AuthResponse.builder().message("Invalid credentials").token(null).build());
         }
 
         // Load user details and generate token
@@ -73,15 +57,15 @@ public class AuthController {
          */
         final String jwt = jwtUtil.generateToken(userDetails, Map.of("role", "USER"));
 
-        return ResponseEntity.ok(new AuthResponse("Login successful", jwt));
+        return ResponseEntity.ok( AuthResponse.builder().message("Login Successful").token(jwt).build());
     }
 
     /*
      * Endpoint for registering the account
      * Checks for already user email, phone number
      */
-    @PostMapping("/user/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody UserRegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity
                     .badRequest()
@@ -97,7 +81,7 @@ public class AuthController {
                 .phoneNumber( request.getPhoneNumber())
                 // true for now .. we need to add email verification after
                 // and maybe also phone number verification
-                .isVerified( true)
+                .isVerified( false)
                 .build();
 
 
@@ -124,4 +108,25 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Invalid token format");
         }
     }
+
+    private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    @Qualifier("userDetailsService")
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public UserAuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+
 }
