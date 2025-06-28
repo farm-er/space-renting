@@ -1,4 +1,4 @@
-package com.oussama.space_renting.dto;
+package com.oussama.space_renting.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class LoginRequest {
+public class UserLoginRequest {
 
     @Email( message= "invalid email", regexp = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     @NotBlank(message = "Email is required")

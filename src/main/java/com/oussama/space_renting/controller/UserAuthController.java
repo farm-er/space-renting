@@ -2,8 +2,8 @@ package com.oussama.space_renting.controller;
 
 
 import com.oussama.space_renting.dto.AuthResponse;
-import com.oussama.space_renting.dto.LoginRequest;
-import com.oussama.space_renting.dto.RegisterRequest;
+import com.oussama.space_renting.dto.user.UserLoginRequest;
+import com.oussama.space_renting.dto.user.UserRegisterRequest;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.repository.UserRepository;
 import com.oussama.space_renting.security.JwtUtil;
@@ -23,7 +23,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/auth")
 @CrossOrigin
-public class AuthController {
+public class UserAuthController {
 
     private final UserRepository userRepository;
 
@@ -38,7 +38,7 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserAuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -46,10 +46,9 @@ public class AuthController {
     /*
      * This endpoint is for Login
      * To get a new token based on credentials
-     * TODO: check if the user is verified before giving the token
      */
     @PostMapping("/user/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginRequest loginRequest) {
         try {
             /*
              * Authenticate the user using the authentication created by the provider
@@ -63,7 +62,7 @@ public class AuthController {
             );
         } catch (BadCredentialsException e) {
             return ResponseEntity.badRequest()
-                    .body(new AuthResponse("Invalid credentials", null));
+                    .body( AuthResponse.builder().message("Invalid credentials").token(null).build());
         }
 
         // Load user details and generate token
@@ -74,7 +73,7 @@ public class AuthController {
          */
         final String jwt = jwtUtil.generateToken(userDetails, Map.of("role", "USER"));
 
-        return ResponseEntity.ok(new AuthResponse("Login successful", jwt));
+        return ResponseEntity.ok( AuthResponse.builder().message("Login Successful").token(jwt).build());
     }
 
     /*
@@ -82,7 +81,7 @@ public class AuthController {
      * Checks for already user email, phone number
      */
     @PostMapping("/user/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody UserRegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity
                     .badRequest()

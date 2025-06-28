@@ -1,4 +1,4 @@
-package com.oussama.space_renting.dto;
+package com.oussama.space_renting.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class RegisterRequest {
+public class UserRegisterRequest {
 
     @NotBlank(message = "First name is required")
     @Size(max = 50)
