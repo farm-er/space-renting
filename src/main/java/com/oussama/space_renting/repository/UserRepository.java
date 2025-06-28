@@ -1,6 +1,6 @@
 package com.oussama.space_renting.repository;
 
-import com.oussama.space_renting.model.User;
+import com.oussama.space_renting.model.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

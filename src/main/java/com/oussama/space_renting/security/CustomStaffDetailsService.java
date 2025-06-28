@@ -1,6 +1,6 @@
 package com.oussama.space_renting.security;
 
-import com.oussama.space_renting.model.User;
+import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

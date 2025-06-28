@@ -4,8 +4,7 @@ package com.oussama.space_renting.controller;
 import com.oussama.space_renting.dto.AuthResponse;
 import com.oussama.space_renting.dto.LoginRequest;
 import com.oussama.space_renting.dto.RegisterRequest;
-import com.oussama.space_renting.model.User;
-import com.oussama.space_renting.model.UserRole;
+import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.repository.UserRepository;
 import com.oussama.space_renting.security.JwtUtil;
 import jakarta.validation.Valid;
@@ -19,7 +18,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController

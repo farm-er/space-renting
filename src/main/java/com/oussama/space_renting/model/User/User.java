@@ -1,6 +1,7 @@
-package com.oussama.space_renting.model;
+package com.oussama.space_renting.model.User;
 
-import com.oussama.space_renting.model.space.Space;
+import com.oussama.space_renting.model.Booking;
+import com.oussama.space_renting.model.Review;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
