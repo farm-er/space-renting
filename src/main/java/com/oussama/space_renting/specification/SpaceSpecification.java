@@ -77,6 +77,11 @@ public class SpaceSpecification {
                 criteriaBuilder.isTrue( root.get(Space_.isAvailable));
     }
 
+    public static Specification<Space> isActive() {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.isTrue( root.get(Space_.isActive));
+    }
+
     /*
      * Like cities' filter
      */
@@ -97,6 +102,7 @@ class Space_ {
     public static volatile SingularAttribute<Space, String> country;
     public static volatile SingularAttribute<Space, String> address;
     public static volatile SingularAttribute<Space, Boolean> isAvailable;
+    public static volatile SingularAttribute<Space, Boolean> isActive;
     public static volatile SetAttribute<Space, Set<Amenity>> amenities;
 }
 

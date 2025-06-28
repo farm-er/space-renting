@@ -46,12 +46,15 @@ public class Space {
     private SpaceType spaceType;
 
     @NotNull
-    @DecimalMin("0.0")
     @Column(name = "price_per_hour", nullable = false, precision = 10, scale = 2)
     private BigDecimal pricePerHour;
 
+    @Builder.Default
+    @Column( nullable = true, precision = 3, scale = 2)
+    private BigDecimal discount = null;
+
     @DecimalMin("0.0")
-    @Column(precision = 8, scale = 2)
+    @Column(nullable = false, precision = 8, scale = 2)
     private BigDecimal area;
 
     @Column(nullable = false)
@@ -64,8 +67,9 @@ public class Space {
     @Column(nullable = false)
     private String city;
 
-    @Column(name = "postal_code", nullable = false)
-    private String postalCode;
+    @Builder.Default
+    @Column(name = "postal_code", nullable = true)
+    private String postalCode = null;
 
     @Column(nullable = false)
     private String country;
