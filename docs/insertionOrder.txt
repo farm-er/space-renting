@@ -1,7 +1,5 @@
-users
 spaces
+users
 bookings
 payments
-space_amenities
-space_images
 reviews

@@ -1,5 +1,7 @@
-package com.oussama.space_renting.model;
+package com.oussama.space_renting.model.User;
 
+import com.oussama.space_renting.model.Booking;
+import com.oussama.space_renting.model.Review;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -76,13 +78,6 @@ public class User {
     private String phoneNumber;
 
     /*
-     * User role can be Renter or Owner
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole role;
-
-    /*
      * is the account verified
      */
     @Builder.Default
@@ -109,12 +104,6 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    /*
-     * Owned spaces
-     */
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Space> ownedSpaces;
 
     /*
      * Bookings done by this user

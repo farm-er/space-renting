@@ -1,7 +1,7 @@
 package com.oussama.space_renting.security;
 
-import com.oussama.space_renting.model.User;
-import com.oussama.space_renting.model.UserRole;
+import com.oussama.space_renting.model.User.User;
+import com.oussama.space_renting.model.User.UserRole;
 import com.oussama.space_renting.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +38,6 @@ public class CustomUserDetailsServiceTest {
          */
         Mockito.when(user.getEmail()).thenReturn( email);
         Mockito.when(user.getPassword()).thenReturn( password);
-        Mockito.when(user.getRole()).thenReturn( UserRole.USER);
 
         Mockito.when(userRepository.findByEmail(email)).thenReturn( Optional.of( user));
 

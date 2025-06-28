@@ -1,4 +1,4 @@
-package com.oussama.space_renting.model;
+package com.oussama.space_renting.model.User;
 
 /*
  * Enum Representing the available roles for the user

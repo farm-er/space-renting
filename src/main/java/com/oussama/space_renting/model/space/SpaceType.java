@@ -1,4 +1,4 @@
-package com.oussama.space_renting.model;
+package com.oussama.space_renting.model.space;
 
 /*
  * Enum representing the available space types

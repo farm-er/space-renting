@@ -1,7 +1,7 @@
 package com.oussama.space_renting.repository;
 
-import com.oussama.space_renting.model.User;
-import com.oussama.space_renting.model.UserRole;
+import com.oussama.space_renting.model.User.User;
+import com.oussama.space_renting.model.User.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,6 @@ public class UserRepositoryTest {
                 .email("john.doe@example.com")
                 .password("123")
                 .phoneNumber("123456789")
-                .role(UserRole.USER)
                 .isVerified(false)
                 .isActive(true)
                 .build();
@@ -78,7 +77,6 @@ public class UserRepositoryTest {
                 .email("john.doe@example.com")
                 .password("123")
                 .phoneNumber("123456789")
-                .role(UserRole.USER)
                 .isVerified(false)
                 .isActive(true)
                 .build();

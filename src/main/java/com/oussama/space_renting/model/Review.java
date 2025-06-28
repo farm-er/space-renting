@@ -1,5 +1,7 @@
 package com.oussama.space_renting.model;
 
+import com.oussama.space_renting.model.User.User;
+import com.oussama.space_renting.model.space.Space;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

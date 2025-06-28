@@ -4,8 +4,7 @@ package com.oussama.space_renting.controller;
 import com.oussama.space_renting.dto.AuthResponse;
 import com.oussama.space_renting.dto.LoginRequest;
 import com.oussama.space_renting.dto.RegisterRequest;
-import com.oussama.space_renting.model.User;
-import com.oussama.space_renting.model.UserRole;
+import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.repository.UserRepository;
 import com.oussama.space_renting.security.JwtUtil;
 import jakarta.validation.Valid;
@@ -18,6 +17,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -46,7 +47,7 @@ public class AuthController {
      * This endpoint is for Login
      * To get a new token based on credentials
      */
-    @PostMapping("/login")
+    @PostMapping("/user/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
             /*
@@ -67,7 +68,10 @@ public class AuthController {
         // Load user details and generate token
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(loginRequest.getEmail());
-        final String jwt = jwtUtil.generateToken(userDetails);
+        /*
+         * Added the role part in claims to use it to differentiate between user/staff/manager
+         */
+        final String jwt = jwtUtil.generateToken(userDetails, Map.of("role", "USER"));
 
         return ResponseEntity.ok(new AuthResponse("Login successful", jwt));
     }
@@ -76,7 +80,7 @@ public class AuthController {
      * Endpoint for registering the account
      * Checks for already user email, phone number
      */
-    @PostMapping("/register")
+    @PostMapping("/user/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity
@@ -91,7 +95,6 @@ public class AuthController {
                 .email( request.getEmail())
                 .password( passwordEncoder.encode(request.getPassword()))
                 .phoneNumber( request.getPhoneNumber())
-                .role( UserRole.USER)
                 // true for now .. we need to add email verification after
                 // and maybe also phone number verification
                 .isVerified( true)

@@ -1,5 +1,9 @@
-package com.oussama.space_renting.model;
+package com.oussama.space_renting.model.space;
 
+import com.oussama.space_renting.model.Booking;
+import com.oussama.space_renting.model.Review;
+import com.oussama.space_renting.util.AmenitySetConverter;
+import com.oussama.space_renting.util.StringListConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -12,6 +16,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "spaces")
@@ -21,6 +26,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Space {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,7 +34,7 @@ public class Space {
     @NotBlank
     @Size(max = 200)
     @Column(nullable = false)
-    private String title;
+    private String name;
 
     @NotBlank
     @Size(max = 2000)
@@ -40,18 +46,15 @@ public class Space {
     private SpaceType spaceType;
 
     @NotNull
-    @DecimalMin("0.0")
     @Column(name = "price_per_hour", nullable = false, precision = 10, scale = 2)
     private BigDecimal pricePerHour;
 
-    @Column(name = "price_per_day", precision = 10, scale = 2)
-    private BigDecimal pricePerDay;
-
-    @Column(name = "price_per_month", precision = 10, scale = 2)
-    private BigDecimal pricePerMonth;
+    @Builder.Default
+    @Column( nullable = true, precision = 3, scale = 2)
+    private BigDecimal discount = null;
 
     @DecimalMin("0.0")
-    @Column(precision = 8, scale = 2)
+    @Column(nullable = false, precision = 8, scale = 2)
     private BigDecimal area;
 
     @Column(nullable = false)
@@ -64,11 +67,9 @@ public class Space {
     @Column(nullable = false)
     private String city;
 
-    @Column(nullable = false)
-    private String state;
-
-    @Column(name = "postal_code", nullable = false)
-    private String postalCode;
+    @Builder.Default
+    @Column(name = "postal_code", nullable = true)
+    private String postalCode = null;
 
     @Column(nullable = false)
     private String country;
@@ -87,20 +88,19 @@ public class Space {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    @Column(name = "minimum_booking_hours")
-    private Integer minimumBookingHours;
+    @Column(name= "available_in", nullable = true)
+    private LocalDateTime availableIn;
 
-    @Column(name = "maximum_booking_hours")
-    private Integer maximumBookingHours;
+    @Convert( converter = AmenitySetConverter.class)
+    @Column(name = "amenities")
+    private Set<Amenity> amenities;
 
-    @ElementCollection
-    @CollectionTable(name = "space_amenities", joinColumns = @JoinColumn(name = "space_id"))
-    @Column(name = "amenity")
-    private List<String> amenities;
-
-    @ElementCollection
-    @CollectionTable(name = "space_images", joinColumns = @JoinColumn(name = "space_id"))
-    @Column(name = "image_url")
+    /*
+     * We use this class to let JPA know how to convert
+     * from and to table column
+     */
+    @Convert(converter = StringListConverter.class)
+    @Column(name = "image_urls")
     private List<String> imageUrls;
 
     @CreationTimestamp
@@ -110,10 +110,6 @@ public class Space {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", nullable = false)
-    private User owner;
 
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Booking> bookings;

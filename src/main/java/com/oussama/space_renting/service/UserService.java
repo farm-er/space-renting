@@ -1,7 +1,7 @@
 package com.oussama.space_renting.service;
 
 
-import com.oussama.space_renting.model.User;
+import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

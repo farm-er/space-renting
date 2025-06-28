@@ -10,12 +10,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service("userDetailsService")
-public class CustomUserDetailsService implements UserDetailsService {
-
+@Service("staffDetailsService")
+public class CustomStaffDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
-    public CustomUserDetailsService(UserRepository userRepository) {
+    public CustomStaffDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -35,5 +34,4 @@ public class CustomUserDetailsService implements UserDetailsService {
                 List.of(new SimpleGrantedAuthority("USER"))
         );
     }
-
 }

@@ -127,11 +127,6 @@
                                                 <td class="constraint detail">fkd1isgfajhtdl8mgg29up6mofi</td>
                                                 <td class="constraint detail"><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
-                                            <tr>
-                                                <td title="spaces.owner_id references users.id via fkqpriun9kt7apa3ayxmb3t1gc7"><a href='spaces.html'>spaces</a><span class='relatedKey'>.owner_id</span></td>
-                                                <td class="constraint detail">fkqpriun9kt7apa3ayxmb3t1gc7</td>
-                                                <td class="constraint detail"><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
-                                            </tr>
                                         </table>
                                     </td>
                                     <td>
@@ -277,23 +272,6 @@
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td><span id="role">role</span></td>
-                                    <td>varchar</td>
-                                    <td>255</td>
-                                    <td title=''></td>
-                                    <td title=''></td>
-                                    <td>null</td>
-                                    <td>
-                                        <table border='0' cellspacing='0' cellpadding='0'>
-                                        </table>
-                                    </td>
-                                    <td>
-                                        <table border='0' cellspacing='0' cellpadding='0'>
-                                        </table>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
                                     <td><span id="updated_at">updated_at</span></td>
                                     <td>timestamp</td>
                                     <td>29,6</td>
@@ -364,38 +342,6 @@
                     </div>
                     <div class="box box-primary">
                         <div class="box-header with-border">
-                            <i class="fa fa-sitemap"></i>
-                            <h3 class="box-title">Check Constraints</h3>
-                            <div class="box-tools pull-right">
-                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                            </div>
-                        </div>
-                        <div class="box-body">
-                            <table
-                                    id="check_table"
-                                    class="table table-bordered table-striped dataTable"
-                                    role="grid"
-                                    data-paging="true"
-                                    data-page-length="10"
-                                    data-length-change="false">
-                                <thead align='left'>
-                                <tr>
-                                    <th>Constraint Name</th>
-                                    <th>Constraint</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>users_role_check</td>
-                                    <td>(((role)::text &#61; ANY ((ARRAY[&#39;ADMIN&#39;::character varying, &#39;USER&#39;::character varying])::text[])))</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="box box-primary">
-                        <div class="box-header with-border">
                             <i class="fa fa-code-fork"></i>
                             <h3 id="Relationships" class="box-title">Relationships</h3>
                             <div class="box-tools pull-right">
@@ -413,22 +359,19 @@
                                 <div class="tab-content no-padding">
                                     <div class="chart tab-pane active" id="oneDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="bookings.html" target="_top" title="bookings" alt="" coords="728,5,971,181">
-<area shape="rect" id="node2" href="users.html" target="_top" title="users" alt="" coords="5,135,345,527">
-<area shape="rect" id="node3" href="spaces.html" target="_top" title="spaces" alt="" coords="389,108,684,255">
-<area shape="rect" id="node4" href="reviews.html" target="_top" title="reviews" alt="" coords="769,200,930,376">
+<area shape="rect" id="node1" href="bookings.html" target="_top" title="bookings" alt="" coords="389,5,632,181">
+<area shape="rect" id="node2" href="users.html" target="_top" title="users" alt="" coords="5,128,345,491">
+<area shape="rect" id="node3" href="reviews.html" target="_top" title="reviews" alt="" coords="430,199,591,375">
 </map>
                                         <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/users.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
                                     <div class="chart tab-pane " id="twodegreesDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="bookings.html" target="_top" title="bookings" alt="" coords="620,321,792,409">
-<area shape="rect" id="node2" href="users.html" target="_top" title="users" alt="" coords="5,159,345,551">
-<area shape="rect" id="node3" href="spaces.html" target="_top" title="spaces" alt="" coords="389,167,540,255">
-<area shape="rect" id="node4" href="payments.html" target="_top" title="payments" alt="" coords="872,319,1052,407">
-<area shape="rect" id="node5" href="reviews.html" target="_top" title="reviews" alt="" coords="627,5,785,93">
-<area shape="rect" id="node6" href="space_amenities.html" target="_top" title="space_amenities" alt="" coords="584,111,828,199">
-<area shape="rect" id="node7" href="space_images.html" target="_top" title="space_images" alt="" coords="597,216,815,304">
+<area shape="rect" id="node1" href="bookings.html" target="_top" title="bookings" alt="" coords="389,17,632,193">
+<area shape="rect" id="node2" href="users.html" target="_top" title="users" alt="" coords="5,5,345,368">
+<area shape="rect" id="node3" href="spaces.html" target="_top" title="spaces" alt="" coords="100,385,251,473">
+<area shape="rect" id="node4" href="payments.html" target="_top" title="payments" alt="" coords="676,20,856,108">
+<area shape="rect" id="node5" href="reviews.html" target="_top" title="reviews" alt="" coords="430,248,591,424">
 </map>
                                         <a name='diagram'><img id="twodegreesDegreeImg" src="../diagrams/tables/users.2degrees.png" usemap="#twoDegreesRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>

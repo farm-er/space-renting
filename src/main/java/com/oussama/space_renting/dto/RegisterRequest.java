@@ -3,7 +3,7 @@ package com.oussama.space_renting.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import com.oussama.space_renting.model.UserRole;
+import com.oussama.space_renting.model.User.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
