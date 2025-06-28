@@ -36,6 +36,7 @@ public class JwtUtil {
      * Function to extract specific field from the Token
      */
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        if (token == null) return null;
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
@@ -69,6 +70,7 @@ public class JwtUtil {
      */
     public Boolean validateToken(String token) {
         try {
+            if (token == null) return false;
             extractAllClaims(token);
             return !isTokenExpired(token);
         } catch (JwtException | IllegalArgumentException e) {
@@ -115,6 +117,7 @@ public class JwtUtil {
      * Function to extract all claims from the Token
      */
     private Claims extractAllClaims(String token) {
+        if (token == null) return null;
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()

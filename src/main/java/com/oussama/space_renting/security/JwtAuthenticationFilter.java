@@ -58,8 +58,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             // Get the actual token
             jwt = authorizationHeader.substring(7);
-            if ( jwt.trim().isEmpty()) {
+            if ( jwt == null || jwt.trim().isEmpty()) {
                 filterChain.doFilter( request, response);
+                return;
             }
             try {
                 email = jwtUtil.extractEmail(jwt);
@@ -70,10 +71,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (email == null || SecurityContextHolder.getContext().getAuthentication() != null) {
             filterChain.doFilter( request, response);
+            return;
         }
 
         // getting the role
         String role = jwtUtil.extractClaim(jwt, claims -> claims.get("role", String.class));
+
+        if ( role == null || role.trim().isEmpty()) {
+            filterChain.doFilter( request, response);
+            return;
+        }
 
         // populating user details with proper data
         UserDetails userDetails = switch (role) {
