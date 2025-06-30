@@ -39,9 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Qualifier("staffDetailsService")
     private UserDetailsService staffDetailsService;
 
-    @Autowired
-    @Qualifier("managerDetailsService")
-    private UserDetailsService managerDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -85,8 +82,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // populating user details with proper data
         UserDetails userDetails = switch (role) {
             case "USER" -> userDetailsService.loadUserByUsername(email);
-            case "MANAGER" -> managerDetailsService.loadUserByUsername(email);
             case "STAFF" -> staffDetailsService.loadUserByUsername(email);
+            case "MANAGER" -> staffDetailsService.loadUserByUsername(email);
             default -> throw new RuntimeException("Unknown role: " + role);
         };
 

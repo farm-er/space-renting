@@ -35,8 +35,8 @@ public class JwtUtil {
     /*
      * Function to extract specific field from the Token
      */
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        if (token == null) return null;
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver)
+            throws JwtException, IllegalArgumentException {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
@@ -92,7 +92,8 @@ public class JwtUtil {
     /*
      * Function to get HMAC-SHA key using the string key from spring boot configuration file
      */
-    private SecretKey getSigningKey() {
+    private SecretKey getSigningKey()
+            throws  io.jsonwebtoken.security.WeakKeyException,  io.jsonwebtoken.io.DecodingException {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
@@ -103,7 +104,8 @@ public class JwtUtil {
      * sets the creation and expiration dates
      * then signs it and return it
      */
-    private String createToken(Map<String, Object> claims, String subject) {
+    private String createToken(Map<String, Object> claims, String subject)
+            throws  io.jsonwebtoken.security.InvalidKeyException {
         return Jwts.builder()
                 .claims(claims)
                 .subject(subject)
@@ -116,8 +118,8 @@ public class JwtUtil {
     /*
      * Function to extract all claims from the Token
      */
-    private Claims extractAllClaims(String token) {
-        if (token == null) return null;
+    private Claims extractAllClaims(String token)
+            throws io.jsonwebtoken.JwtException, IllegalArgumentException {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()

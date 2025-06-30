@@ -20,11 +20,24 @@ public class CustomStaffDetailsService implements UserDetailsService {
         Staff staff = staffRepository.findByEmail( email)
                 .orElseThrow(() -> new UsernameNotFoundException("Staff not found"));
 
-        return new org.springframework.security.core.userdetails.User(
-                staff.getEmail(),
-                staff.getPassword(),
-                List.of(new SimpleGrantedAuthority("STAFF"))
-        );
+
+        switch (staff.getRole()) {
+            case STAFF -> {
+                return new org.springframework.security.core.userdetails.User(
+                    staff.getEmail(),
+                    staff.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_STAFF"))
+                );
+            }
+            case MANAGER -> {
+                return new org.springframework.security.core.userdetails.User(
+                        staff.getEmail(),
+                        staff.getPassword(),
+                        List.of(new SimpleGrantedAuthority("ROLE_MANAGER"))
+                );
+            }
+            default -> throw new UsernameNotFoundException("Invalid role for staff: " + email);
+        }
     }
 
     public CustomStaffDetailsService(StaffRepository staffRepository) {

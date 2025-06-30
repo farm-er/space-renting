@@ -2,13 +2,13 @@ package com.oussama.space_renting.service;
 
 
 import com.oussama.space_renting.model.User.User;
-import com.oussama.space_renting.model.User.UserRole;
 import com.oussama.space_renting.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,11 +20,12 @@ public class UserServiceTest {
 
     private UserRepository userRepository;
     private UserService userService;
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
-        userService = new UserService(userRepository);
+        userService = new UserService(userRepository, passwordEncoder);
     }
 
     @DisplayName("Should return user with the provided id")

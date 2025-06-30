@@ -2,25 +2,35 @@ package com.oussama.space_renting.controller;
 
 
 import com.oussama.space_renting.dto.AuthResponse;
-import com.oussama.space_renting.dto.manager.ManagerRegisterRequest;
-import com.oussama.space_renting.dto.staff.StaffLoginRequest;
-import com.oussama.space_renting.dto.staff.StaffRegisterRequest;
-import com.oussama.space_renting.dto.user.UserLoginRequest;
-import com.oussama.space_renting.model.Manager.Manager;
+import com.oussama.space_renting.dto.staff.StaffDTO;
+import com.oussama.space_renting.dto.staff.StaffLoginRequestDTO;
+import com.oussama.space_renting.dto.staff.StaffRegisterRequestDTO;
+import com.oussama.space_renting.dto.staff.StaffRegisterResponseDTO;
+import com.oussama.space_renting.dto.user.UserRegisterResponseDTO;
+import com.oussama.space_renting.exception.EmailAlreadyExistsException;
 import com.oussama.space_renting.model.Staff.Staff;
-import com.oussama.space_renting.repository.ManagerRepository;
+import com.oussama.space_renting.model.Staff.StaffRole;
+import com.oussama.space_renting.model.Staff.StaffStatus;
 import com.oussama.space_renting.repository.StaffRepository;
-import com.oussama.space_renting.repository.UserRepository;
 import com.oussama.space_renting.security.JwtUtil;
+import com.oussama.space_renting.service.StaffService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,69 +43,104 @@ public class StaffAuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody StaffRegisterRequest request) {
-        if (staffRepository.existsByEmail(request.getEmail())) {
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<?> register(@Valid @RequestBody StaffRegisterRequestDTO request, HttpServletRequest httpRequest) {
+
+        try {
+
+            StaffDTO staffDTO = staffService.createStaff( request);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body( StaffRegisterResponseDTO.builder()
+                            .message("Staff created successfully")
+                            .staff( staffDTO)
+                            .build()
+                    );
+        } catch ( EmailAlreadyExistsException e) {
             return ResponseEntity
-                    .badRequest()
-                    .body("Email is already used");
+                    .status(HttpStatus.CONFLICT)
+                    .body(StaffRegisterResponseDTO.builder()
+                            .message("Email already used")
+                            .staff(null)
+                            .build()
+                    );
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body( StaffRegisterResponseDTO.builder()
+                            .message("Internal server error")
+                            .staff(null)
+                            .build()
+                    );
         }
-
-        Staff staff = Staff.builder()
-                .firstName( request.getFirstName())
-                .lastName( request.getLastName())
-                .email( request.getEmail())
-                .password( passwordEncoder.encode(request.getPassword()))
-                .build();
-
-
-        staffRepository.save(staff);
-
-        return ResponseEntity.ok("Staff registered successfully");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody StaffLoginRequest loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody StaffLoginRequestDTO loginRequest) {
+
+
         try {
-            authenticationManager.authenticate(
+
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getEmail(),
                             loginRequest.getPassword()
                     )
             );
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.badRequest()
+
+            // Load user details and generate token
+            final UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            final String role = userDetails.getAuthorities().stream()
+                    .findFirst()
+                    .map(GrantedAuthority::getAuthority)
+                    .map(authority -> authority.startsWith("ROLE_") ? authority.substring(5) : authority)
+                    .orElse("UNKNOWN");
+
+            /*
+             * Added the role part in claims to use it to differentiate between user/staff/manager
+             */
+            final String jwt = jwtUtil.generateToken(userDetails, Map.of("role", role));
+
+            return ResponseEntity.ok( AuthResponse.builder().message("Login Successful").token(jwt).build());
+
+        }  catch (BadCredentialsException  e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body( AuthResponse.builder().message("Invalid credentials").token(null).build());
+        } catch ( NullPointerException e) {
+            return ResponseEntity.internalServerError()
+                    .body( AuthResponse.builder().message("Internal server error").token(null).build());
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body( AuthResponse.builder().message("Authentication failed").token(null).build());
+        } catch (Exception e) {
+            // Log unexpected errors
+            System.out.println("Unexpected error during staff login" + e.getMessage());
+            return ResponseEntity.internalServerError()
+                    .body(AuthResponse.builder().message("Internal server error").token(null).build());
         }
 
-        // Load user details and generate token
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(loginRequest.getEmail());
-        /*
-         * Added the role part in claims to use it to differentiate between user/staff/manager
-         */
-        final String jwt = jwtUtil.generateToken(userDetails, Map.of("role", "STAFF"));
-
-        return ResponseEntity.ok( AuthResponse.builder().message("Login Successful").token(jwt).build());
     }
 
 
-    private final StaffRepository staffRepository;
+    private final StaffService staffService;
 
-    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final UserDetailsService staffDetailsService;
 
-    @Autowired
-    @Qualifier("staffDetailsService")
-    private UserDetailsService userDetailsService;
+    private final JwtUtil jwtUtil;
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    public StaffAuthController(StaffRepository staffRepository, PasswordEncoder passwordEncoder) {
-        this.staffRepository = staffRepository;
-        this.passwordEncoder = passwordEncoder;
+    public StaffAuthController(
+            StaffService staffService,
+            JwtUtil jwtUtil,
+            @Qualifier("staffDetailsService") UserDetailsService staffDetailsService,
+            @Qualifier("staffAuthenticationManager") AuthenticationManager authenticationManager
+    ) {
+        this.staffService = staffService;
+        this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
+        this.staffDetailsService = staffDetailsService;
     }
 
 }

@@ -26,7 +26,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - 5433:5432
 
     steps:
       - name: Checkout code
@@ -47,7 +47,7 @@ jobs:
 
       - name: Wait for PostgreSQL
         run: |
-          until pg_isready -h localhost -p 5432 -U test; do
+          until pg_isready -h localhost -p 5433 -U test; do
             echo "Waiting for PostgreSQL..."
             sleep 2
           done

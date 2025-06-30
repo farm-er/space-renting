@@ -1,7 +1,6 @@
 package com.oussama.space_renting.repository;
 
 import com.oussama.space_renting.model.User.User;
-import com.oussama.space_renting.model.User.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,6 +56,33 @@ public class UserRepositoryTest {
     void findByEmail_DoesntExist() {
         Optional<User> found = userRepository.findByEmail("unknown@example.com");
         assertThat(found).isEmpty();
+    }
+
+
+    @DisplayName("should return false for phone number that doesn't exist")
+    @Test
+    void existsByEmail_DoesntExist() {
+        boolean result = userRepository.existsByEmail("email@example.com");
+
+        assertFalse(result);
+    }
+
+    @DisplayName("should return true for existing phone number")
+    @Test
+    void existsByEmail_Exists() {
+        User user = User.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("123")
+                .phoneNumber("123456789")
+                .isVerified(false)
+                .build();
+
+        userRepository.save(user);
+        boolean result = userRepository.existsByEmail("john.doe@example.com");
+
+        assertTrue(result);
     }
 
     @DisplayName("should return false for phone number that doesn't exist")
