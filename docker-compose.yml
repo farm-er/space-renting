@@ -18,7 +18,7 @@ services:
 
   app:
     build: .
-    container_name: spring-boot-app
+    container_name: space-renting-app
     restart: unless-stopped
     depends_on:
       - postgres
