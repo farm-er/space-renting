@@ -105,7 +105,7 @@ public class SecurityConfig {
         http
                 // Disabling csrf protection because we're not using sessions
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
+                .cors( cors -> cors.configurationSource(corsConfigurationSource()))
                 // Exceptions when it comes to applying Auth Filters
                 .authorizeHttpRequests(authz -> authz
                         // If we needed to allow another version we can add it here

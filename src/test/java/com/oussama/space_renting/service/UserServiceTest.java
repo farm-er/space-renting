@@ -1,31 +1,95 @@
 package com.oussama.space_renting.service;
 
 
+import com.oussama.space_renting.dto.user.UserDTO;
+import com.oussama.space_renting.dto.user.UserRegisterRequestDTO;
+import com.oussama.space_renting.dto.user.UserRegisterResponseDTO;
+import com.oussama.space_renting.exception.EmailAlreadyExistsException;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 @ExtendWith(SpringExtension.class)
 public class UserServiceTest {
 
-    private UserRepository userRepository;
-    private UserService userService;
-    private PasswordEncoder passwordEncoder;
-
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         userService = new UserService(userRepository, passwordEncoder);
+    }
+
+
+    @DisplayName("Creating new user throw exception when email is already used")
+    @Test
+    public void testCreateUser_EmailAlreadyExists() {
+
+        UserRegisterRequestDTO user = UserRegisterRequestDTO.builder()
+                .firstName("first name")
+                .lastName("last name")
+                .email("email@gmail.com")
+                .password("password")
+                .phoneNumber("+212897887987")
+                .build();
+
+        Mockito.when(userRepository.existsByEmail(user.getEmail())).thenReturn( true);
+
+        assertThrows(
+                EmailAlreadyExistsException.class,
+                () -> userService.createUser(user),
+                "Expected createUser to throw but it didn't"
+        );
+    }
+
+    @DisplayName("Creating new user is completed successfully")
+    @Test
+    public void testCreateUser_EmailDoesntExist() {
+
+        UserRegisterRequestDTO userRequest = UserRegisterRequestDTO.builder()
+                .firstName("first name")
+                .lastName("last name")
+                .email("email@gmail.com")
+                .password("password")
+                .phoneNumber("+212897887987")
+                .build();
+
+
+        User savedUser = User.builder()
+                .createdAt(LocalDateTime.now())
+                .isVerified(false)
+                .id(UUID.randomUUID())
+                .firstName("first name")
+                .lastName("last name")
+                .email("email@gmail.com")
+                .password("password")
+                .phoneNumber("+212897887987")
+                .build();
+
+        Mockito.when(userRepository.existsByEmail(userRequest.getEmail())).thenReturn( false);
+        Mockito.when(userRepository.save( any(User.class))).thenReturn( savedUser);
+
+        UserDTO userDTO = userService.createUser(userRequest);
+
+
+        assertNotNull( userDTO.getId());
+        assertEquals( savedUser.getId(), userDTO.getId());
+        assertEquals( savedUser.getEmail(), userDTO.getEmail());
+        assertEquals( savedUser.getFirstName(), userDTO.getFirstName());
+        assertEquals( savedUser.getLastName(), userDTO.getLastName());
+        assertEquals( savedUser.getPhoneNumber(), userDTO.getPhoneNumber());
+
     }
 
     @DisplayName("Should return user with the provided id")
@@ -136,4 +200,13 @@ public class UserServiceTest {
         boolean result = userService.existsByPhoneNumber( phoneNumber);
         assertFalse( result);
     }
+
+
+    private UserRepository userRepository;
+    private UserService userService;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+
 }
