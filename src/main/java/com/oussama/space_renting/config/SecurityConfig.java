@@ -30,6 +30,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity( prePostEnabled = true)
@@ -136,10 +138,27 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOriginPattern("*");  // or specify your frontend URL here
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(true);  // if you want cookies/auth headers allowed
+
+        // Be very explicit about allowed origins - add your frontend URL
+        configuration.setAllowedOriginPatterns(List.of("*"));
+        // If you know your frontend URL, use this instead:
+        // configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:3000"));
+
+        // Be explicit about methods
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
+
+        // Allow all headers
+        configuration.setAllowedHeaders(List.of("*"));
+
+        // Expose headers that frontend might need
+        configuration.setExposedHeaders(List.of("Authorization", "Content-Type", "X-Total-Count"));
+
+        // Allow credentials (cookies, auth headers)
+        configuration.setAllowCredentials(true);
+
+        // Cache preflight for 1 hour
+        configuration.setMaxAge(3600L);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
