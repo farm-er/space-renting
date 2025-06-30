@@ -2,21 +2,23 @@ package com.oussama.space_renting.controller;
 
 
 import com.oussama.space_renting.dto.AuthResponse;
+import com.oussama.space_renting.dto.user.UserDTO;
 import com.oussama.space_renting.dto.user.UserLoginRequest;
-import com.oussama.space_renting.dto.user.UserRegisterRequest;
-import com.oussama.space_renting.model.User.User;
-import com.oussama.space_renting.repository.UserRepository;
+import com.oussama.space_renting.dto.user.UserRegisterRequestDTO;
+import com.oussama.space_renting.dto.user.UserRegisterResponseDTO;
+import com.oussama.space_renting.exception.EmailAlreadyExistsException;
 import com.oussama.space_renting.security.JwtUtil;
+import com.oussama.space_renting.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -44,20 +46,32 @@ public class UserAuthController {
                             loginRequest.getPassword()
                     )
             );
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.badRequest()
+
+            // Load user details and generate token
+            final UserDetails userDetails = userDetailsService
+                    .loadUserByUsername(loginRequest.getEmail());
+            /*
+             * Added the role part in claims to use it to differentiate between user/staff/manager
+             */
+            final String jwt = jwtUtil.generateToken(userDetails, Map.of("role", "USER"));
+
+            return ResponseEntity.ok( AuthResponse.builder().message("Login Successful").token(jwt).build());
+
+        } catch (BadCredentialsException  e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body( AuthResponse.builder().message("Invalid credentials").token(null).build());
+        } catch ( NullPointerException e) {
+            return ResponseEntity.internalServerError()
+                    .body( AuthResponse.builder().message("Internal server error").token(null).build());
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body( AuthResponse.builder().message("Authentication failed").token(null).build());
+        } catch (Exception e) {
+            // Log unexpected errors
+            System.out.println("Unexpected error during user login" + e.getMessage());
+            return ResponseEntity.internalServerError()
+                    .body(AuthResponse.builder().message("Internal server error").token(null).build());
         }
-
-        // Load user details and generate token
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(loginRequest.getEmail());
-        /*
-         * Added the role part in claims to use it to differentiate between user/staff/manager
-         */
-        final String jwt = jwtUtil.generateToken(userDetails, Map.of("role", "USER"));
-
-        return ResponseEntity.ok( AuthResponse.builder().message("Login Successful").token(jwt).build());
     }
 
     /*
@@ -65,29 +79,35 @@ public class UserAuthController {
      * Checks for already user email, phone number
      */
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody UserRegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+    public ResponseEntity<?> register(@Valid @RequestBody UserRegisterRequestDTO request) {
+
+        try {
+            UserDTO userDTO = userService.createUser( request);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body( UserRegisterResponseDTO.builder()
+                            .message("user created successfully")
+                            .user( userDTO)
+                            .build()
+                    );
+        } catch ( EmailAlreadyExistsException e) {
             return ResponseEntity
-                    .badRequest()
-                    .body("Email is already taken");
+                    .status(HttpStatus.CONFLICT)
+                    .body(UserRegisterResponseDTO.builder()
+                            .message("Email already used")
+                            .user(null)
+                            .build()
+                    );
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(UserRegisterResponseDTO.builder()
+                            .message("Internal server error")
+                            .user(null)
+                            .build()
+                    );
         }
 
-        // Create user entity
-        User user = User.builder()
-                .firstName( request.getFirstName())
-                .lastName( request.getLastName())
-                .email( request.getEmail())
-                .password( passwordEncoder.encode(request.getPassword()))
-                .phoneNumber( request.getPhoneNumber())
-                // true for now .. we need to add email verification after
-                // and maybe also phone number verification
-                .isVerified( false)
-                .build();
-
-
-        userRepository.save(user);
-
-        return ResponseEntity.ok("User registered successfully");
     }
 
     /*
@@ -109,23 +129,24 @@ public class UserAuthController {
         }
     }
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    private final PasswordEncoder passwordEncoder;
-
-    @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
-    @Qualifier("userDetailsService")
     private UserDetailsService userDetailsService;
 
-    @Autowired
     private JwtUtil jwtUtil;
 
-    public UserAuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public UserAuthController(
+            UserService userService,
+            JwtUtil jwtUtil,
+            @Qualifier("userDetailsService") UserDetailsService userDetailsService,
+            @Qualifier("userAuthenticationManager") AuthenticationManager authenticationManager
+    ) {
+        this.userService = userService;
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
+        this.authenticationManager = authenticationManager;
     }
 
 

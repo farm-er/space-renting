@@ -54,4 +54,8 @@ public class Staff {
     @Column( nullable = false)
     private StaffStatus status = StaffStatus.ACTIVE;
 
+    @Enumerated(EnumType.STRING)
+    @Column( nullable = false)
+    private StaffRole role;
+
 }

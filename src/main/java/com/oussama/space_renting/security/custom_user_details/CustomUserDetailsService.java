@@ -2,6 +2,7 @@ package com.oussama.space_renting.security.custom_user_details;
 
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.repository.UserRepository;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service("userDetailsService")
+@Primary
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;

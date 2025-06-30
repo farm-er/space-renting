@@ -1,11 +1,18 @@
-package com.oussama.space_renting.security;
+package com.oussama.space_renting.config;
 
 
+import com.oussama.space_renting.security.JwtAuthenticationFilter;
+import com.oussama.space_renting.security.custom_user_details.CustomStaffDetailsService;
+import com.oussama.space_renting.security.custom_user_details.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationObservationContext;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -25,14 +32,17 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity( prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private CustomStaffDetailsService staffDetailsService;
 
     /*
      * Password encoder with Bcrypt
@@ -50,8 +60,19 @@ public class SecurityConfig {
      * Called by config.getAuthenticationManager
      */
     @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider( userDetailsService);
+    @Qualifier("userAuthenticationProvider")
+    public AuthenticationProvider userAuthenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    @Qualifier("staffAuthenticationProvider")
+    public AuthenticationProvider staffAuthenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(staffDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
@@ -60,10 +81,20 @@ public class SecurityConfig {
      * Function to populate or initialize the Authentication Manager
      * This function calls config.getAuthenticationManager that will ultimately call the AuthenticationProvider from this class
      */
+
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+    @Qualifier("userAuthenticationManager")
+    @Primary
+    public AuthenticationManager userAuthenticationManager() {
+        return new ProviderManager(userAuthenticationProvider());
     }
+
+    @Bean
+    @Qualifier("staffAuthenticationManager")
+    public AuthenticationManager staffAuthenticationManager() {
+        return new ProviderManager( staffAuthenticationProvider());
+    }
+
 
     /*
      * Function to define the filter chain
@@ -95,7 +126,8 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 // Use our own authentication provider
-                .authenticationProvider(authenticationProvider())
+                .authenticationProvider(userAuthenticationProvider())
+                .authenticationProvider(staffAuthenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

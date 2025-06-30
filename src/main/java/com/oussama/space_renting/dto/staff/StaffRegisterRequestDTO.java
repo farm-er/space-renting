@@ -1,17 +1,15 @@
-package com.oussama.space_renting.dto.user;
+package com.oussama.space_renting.dto.staff;
+
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import com.oussama.space_renting.model.User.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
-
 
 @Getter
 @AllArgsConstructor
-public class UserRegisterRequest {
+public class StaffRegisterRequestDTO {
 
     @NotBlank(message = "First name is required")
     @Size(max = 50)
@@ -28,9 +26,5 @@ public class UserRegisterRequest {
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters")
     private final String password;
-
-    @NotBlank(message = "Phone number is required")
-    @Size(max = 20)
-    private final String phoneNumber;
 
 }
