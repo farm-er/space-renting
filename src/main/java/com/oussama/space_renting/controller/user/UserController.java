@@ -62,7 +62,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(
             @PathVariable UUID id,
             @RequestBody Map<String, String> updates,
@@ -73,7 +73,13 @@ public class UserController {
 
             User user = userService.getUserById(id);
 
-            if (!user.getEmail().equals(authentication.getName())) {
+            boolean hasManagementRole = authentication.getAuthorities().stream()
+                    .anyMatch(authority ->
+                            authority.getAuthority().equals("ROLE_MANAGER")
+                                    || authority.getAuthority().equals("ROLE_STAFF")
+                    );
+
+            if ( !hasManagementRole && !user.getEmail().equals(authentication.getName())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
             updates.forEach((key, value) -> {
@@ -88,14 +94,14 @@ public class UserController {
             User savedUser = userService.save(user);
 
             UserDTO userDTO = UserDTO.builder()
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .firstName(user.getFirstName())
-                    .lastName(user.getLastName())
-                    .phoneNumber(user.getPhoneNumber())
-                    .createdAt(user.getCreatedAt())
-                    .updatedAt(user.getUpdatedAt())
-                    .isVerified(user.getIsVerified())
+                    .id(savedUser.getId())
+                    .email(savedUser.getEmail())
+                    .firstName(savedUser.getFirstName())
+                    .lastName(savedUser.getLastName())
+                    .phoneNumber(savedUser.getPhoneNumber())
+                    .createdAt(savedUser.getCreatedAt())
+                    .updatedAt(savedUser.getUpdatedAt())
+                    .isVerified(savedUser.getIsVerified())
                     .build();
 
             return ResponseEntity.ok(userDTO);

@@ -3,6 +3,7 @@ package com.oussama.space_renting.service;
 import com.oussama.space_renting.dto.staff.StaffDTO;
 import com.oussama.space_renting.dto.staff.StaffRegisterRequestDTO;
 import com.oussama.space_renting.exception.EmailAlreadyExistsException;
+import com.oussama.space_renting.exception.StaffNotFoundException;
 import com.oussama.space_renting.model.Staff.Staff;
 import com.oussama.space_renting.model.Staff.StaffRole;
 import com.oussama.space_renting.model.User.User;
@@ -48,14 +49,14 @@ public class StaffService {
         return staffRepository.existsByEmail(email);
     }
 
-    public Staff getStaffById(UUID id) {
+    public Staff getStaffById(UUID id) throws StaffNotFoundException{
         return staffRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Staff not found with id: " + id.toString()));
+                .orElseThrow(() -> new StaffNotFoundException("Staff not found with id: " + id.toString()));
     }
 
-    public Staff getStaffByEmail(String email) {
+    public Staff getStaffByEmail(String email) throws StaffNotFoundException{
         return staffRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Staff not found with email: " + email));
+                .orElseThrow(() -> new StaffNotFoundException("Staff not found with email: " + email));
     }
 
     private final StaffRepository staffRepository;
@@ -67,5 +68,8 @@ public class StaffService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public Staff save(Staff staff) {
+        return staffRepository.save(staff);
+    }
 
 }

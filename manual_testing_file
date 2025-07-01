@@ -1,3 +1,5 @@
+
+=========USER===========
 curl -X POST http://localhost:8080/api/v1/auth/users/register \
   -H "Content-Type: application/json" \
   -d '{
@@ -28,3 +30,33 @@ curl -X PATCH http://localhost:8080/api/v1/users/USER_ID_HERE \
     "phoneNumber": "+212600000000"
   }'
 
+=========Staff===========
+
+// login as a manager
+curl -X POST http://localhost:8080/api/v1/auth/staff/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@company.com",
+    "password": "12345678"
+  }'
+
+curl -X POST http://localhost:8080/api/v1/auth/staff/register \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your.jwt.token" \
+  -d '{
+    "firstName": "Staff",
+    "lastName": "Member",
+    "email": "staff@example.com",
+    "password": "staff_password"
+  }'
+
+
+curl -X GET http://localhost:8080/api/v1/staff/{staff_id} \
+  -H "Authorization: Bearer your.jwt.token"
+
+curl -X PUT http://localhost:8080/api/v1/staff/{staff_id} \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your.jwt.token" \
+  -d '{
+    "firstName": "UpdatedFirstName"
+  }'
