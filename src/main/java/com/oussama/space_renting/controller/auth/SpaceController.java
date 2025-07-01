@@ -1,4 +1,4 @@
-package com.oussama.space_renting.controller;
+package com.oussama.space_renting.controller.auth;
 
 import com.oussama.space_renting.dto.CreateSpaceDTO;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,9 +1,9 @@
-package com.oussama.space_renting.controller;
+package com.oussama.space_renting.controller.auth;
 
 
 import com.oussama.space_renting.dto.AuthResponse;
 import com.oussama.space_renting.dto.user.UserDTO;
-import com.oussama.space_renting.dto.user.UserLoginRequest;
+import com.oussama.space_renting.dto.user.UserLoginRequestDTO;
 import com.oussama.space_renting.dto.user.UserRegisterRequestDTO;
 import com.oussama.space_renting.dto.user.UserRegisterResponseDTO;
 import com.oussama.space_renting.exception.EmailAlreadyExistsException;
@@ -16,9 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -34,13 +34,13 @@ public class UserAuthController {
      * To get a new token based on credentials
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginRequest loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginRequestDTO loginRequest) {
         try {
             /*
              * Authenticate the user using the authentication created by the provider
              * in SecurityConfig
              */
-            authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getEmail(),
                             loginRequest.getPassword()
@@ -48,8 +48,7 @@ public class UserAuthController {
             );
 
             // Load user details and generate token
-            final UserDetails userDetails = userDetailsService
-                    .loadUserByUsername(loginRequest.getEmail());
+            final UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             /*
              * Added the role part in claims to use it to differentiate between user/staff/manager
              */
@@ -73,6 +72,7 @@ public class UserAuthController {
                     .body(AuthResponse.builder().message("Internal server error").token(null).build());
         }
     }
+
 
     /*
      * Endpoint for registering the account
@@ -131,21 +131,17 @@ public class UserAuthController {
 
     private final UserService userService;
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    private UserDetailsService userDetailsService;
-
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
     public UserAuthController(
             UserService userService,
             JwtUtil jwtUtil,
-            @Qualifier("userDetailsService") UserDetailsService userDetailsService,
             @Qualifier("userAuthenticationManager") AuthenticationManager authenticationManager
     ) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
         this.authenticationManager = authenticationManager;
     }
 
