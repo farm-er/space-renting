@@ -201,6 +201,49 @@ public class UserServiceTest {
         assertFalse( result);
     }
 
+    @DisplayName("Should save the user to the db")
+    @Test
+    public void testSaveSuccess() {
+        User user = User.builder()
+                .firstName("first name")
+                .lastName("last name")
+                .email("example@gmail.com")
+                .password("password")
+                .build();
+        User expectedSavedUser = User.builder()
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .id(UUID.randomUUID())
+                .firstName("first name")
+                .lastName("last name")
+                .email("example@gmail.com")
+                .password("password")
+                .build();
+
+        Mockito.when( userRepository.save(user)).thenReturn( expectedSavedUser);
+
+        User savedUser = userService.save( user);
+
+        assertEquals( expectedSavedUser.getId(), savedUser.getId());
+        assertEquals( expectedSavedUser.getEmail(), savedUser.getEmail());
+        assertEquals( expectedSavedUser.getFirstName(), savedUser.getFirstName());
+        assertEquals( expectedSavedUser.getLastName(), savedUser.getLastName());
+    }
+
+    @DisplayName("Should save the user to the db")
+    @Test
+    public void testSaveFail() {
+
+
+        Mockito.when( userRepository.save(null)).thenThrow( IllegalArgumentException.class);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> userService.save(null),
+                "Should throw Illegal argument"
+        );
+
+    }
 
     private UserRepository userRepository;
     private UserService userService;
