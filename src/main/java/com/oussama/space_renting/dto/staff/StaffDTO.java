@@ -20,4 +20,5 @@ public class StaffDTO {
     private StaffRole role;
     private StaffStatus status;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
