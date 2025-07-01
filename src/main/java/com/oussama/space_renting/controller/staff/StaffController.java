@@ -7,6 +7,7 @@ import com.oussama.space_renting.exception.StaffNotFoundException;
 import com.oussama.space_renting.exception.UserNotFoundException;
 import com.oussama.space_renting.model.Staff.Staff;
 import com.oussama.space_renting.model.Staff.StaffRole;
+import com.oussama.space_renting.model.Staff.StaffStatus;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.service.StaffService;
 import com.oussama.space_renting.service.UserService;
@@ -136,6 +137,77 @@ public class StaffController {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Internal server error");
         }
+
+    }
+
+    @PreAuthorize("hasRole('MANAGER)")
+    @PostMapping("/suspend/{id}")
+    public ResponseEntity<?> suspendStaff(
+            @PathVariable UUID id,
+            Authentication authentication
+    ) {
+
+        try {
+
+            Staff staff = staffService.getStaffById( id);
+
+            if (staff.getRole() == StaffRole.MANAGER) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Can't suspend manager account");
+            }
+
+            staffService.updateStatus( staff.getId(), StaffStatus.SUSPENDED);
+
+            return ResponseEntity.ok("Staff suspended successfully");
+
+        } catch ( IllegalArgumentException e ) {
+            return ResponseEntity.badRequest()
+                    .body("Missing id");
+        } catch ( StaffNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error");
+        }
+
+
+    }
+
+
+    @PreAuthorize("hasRole('MANAGER)")
+    @PostMapping("/activate/{id}")
+    public ResponseEntity<?> activateStaff(
+            @PathVariable UUID id,
+            Authentication authentication
+    ) {
+
+        try {
+
+            Staff staff = staffService.getStaffById( id);
+
+            if (staff.getRole() == StaffRole.MANAGER) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Can't suspend manager account");
+            }
+
+            staffService.updateStatus( staff.getId(), StaffStatus.ACTIVE);
+
+            return ResponseEntity.ok("Staff suspended successfully");
+
+        } catch ( IllegalArgumentException e ) {
+            return ResponseEntity.badRequest()
+                    .body("Missing id");
+        } catch ( StaffNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error");
+        }
+
 
     }
 

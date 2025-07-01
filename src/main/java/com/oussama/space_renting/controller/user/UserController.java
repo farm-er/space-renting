@@ -26,15 +26,54 @@ public class UserController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUser(@PathVariable UUID id, Authentication authentication) {
+    public ResponseEntity<?> getUserById(@PathVariable UUID id, Authentication authentication) {
 
         try {
 
             User user = userService.getUserById( id);
 
-            if (!user.getEmail().equals(authentication.getName())) {
+            boolean hasManagementRole = authentication.getAuthorities().stream()
+                    .anyMatch(authority ->
+                            authority.getAuthority().equals("ROLE_MANAGER")
+                                    || authority.getAuthority().equals("ROLE_STAFF")
+                    );
+
+            if ( !hasManagementRole && !user.getEmail().equals(authentication.getName())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
+
+            UserDTO userDTO = UserDTO.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName())
+                    .phoneNumber(user.getPhoneNumber())
+                    .createdAt(user.getCreatedAt())
+                    .updatedAt(user.getUpdatedAt())
+                    .isVerified(user.getIsVerified())
+                    .build();
+            return ResponseEntity.ok(userDTO);
+
+        } catch ( IllegalArgumentException e ) {
+            return ResponseEntity.badRequest()
+                    .body("Missing id");
+        } catch ( UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error");
+        }
+    }
+
+
+    @GetMapping("/")
+    public ResponseEntity<?> getUserByToken( Authentication authentication) {
+
+        try {
+
+            User user = userService.getUserByEmail( authentication.getName());
 
             UserDTO userDTO = UserDTO.builder()
                     .id(user.getId())

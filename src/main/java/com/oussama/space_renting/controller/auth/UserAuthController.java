@@ -9,6 +9,10 @@ import com.oussama.space_renting.dto.user.UserRegisterResponseDTO;
 import com.oussama.space_renting.exception.EmailAlreadyExistsException;
 import com.oussama.space_renting.security.JwtUtil;
 import com.oussama.space_renting.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -26,6 +30,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/auth/users")
 @CrossOrigin
+@Tag(name = "Authentication", description = "User authentication endpoints")
+@SecurityRequirements(value = {})
 public class UserAuthController {
 
 
@@ -34,6 +40,10 @@ public class UserAuthController {
      * To get a new token based on credentials
      */
     @PostMapping("/login")
+    @Operation(
+            summary = "User login",
+            description = "Login to a user account"
+    )
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody UserLoginRequest loginRequest) {
         try {
             /*
@@ -79,6 +89,11 @@ public class UserAuthController {
      * Checks for already user email, phone number
      */
     @PostMapping("/register")
+    @Operation(
+            summary = "User registration",
+            description = "Register a new user account",
+            security = {}
+    )
     public ResponseEntity<UserRegisterResponseDTO> register(@Valid @RequestBody UserRegisterRequestDTO request) {
 
         try {
@@ -116,6 +131,11 @@ public class UserAuthController {
      * Works if you want to know if you need to refresh your token for example
      */
     @PostMapping("/validate")
+    @Operation(
+            summary = "Token validation",
+            description = "Check if your token is valid",
+            security = {}
+    )
     public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String authHeader) {
         try {
             String token = authHeader.substring(7); // Remove "Bearer " prefix

@@ -9,6 +9,9 @@ import com.oussama.space_renting.dto.staff.StaffRegisterResponseDTO;
 import com.oussama.space_renting.exception.EmailAlreadyExistsException;
 import com.oussama.space_renting.security.JwtUtil;
 import com.oussama.space_renting.service.StaffService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +33,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/auth/staff")
 @CrossOrigin
+@Tag(name = "Authentication", description = "Staff authentication endpoints")
 public class StaffAuthController {
 
 
@@ -67,6 +71,7 @@ public class StaffAuthController {
     }
 
     @PostMapping("/login")
+    @SecurityRequirements(value = {})
     public ResponseEntity<?> login(@Valid @RequestBody StaffLoginRequestDTO loginRequest) {
 
 
