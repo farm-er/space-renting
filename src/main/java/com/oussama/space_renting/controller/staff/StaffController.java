@@ -6,6 +6,7 @@ import com.oussama.space_renting.dto.user.UserDTO;
 import com.oussama.space_renting.exception.StaffNotFoundException;
 import com.oussama.space_renting.exception.UserNotFoundException;
 import com.oussama.space_renting.model.Staff.Staff;
+import com.oussama.space_renting.model.Staff.StaffRole;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.service.StaffService;
 import com.oussama.space_renting.service.UserService;
@@ -22,7 +23,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/staff")
 public class StaffController {
 
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('STAFF')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getStaff(@PathVariable UUID id, Authentication authentication) {
 
@@ -54,10 +55,9 @@ public class StaffController {
         }
     }
 
-
-    @PreAuthorize("hasRole('MANAGER') or hasRole('STAFF')")
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(
+    public ResponseEntity<?> updateStaff(
             @PathVariable UUID id,
             @RequestBody Map<String, String> updates,
             Authentication authentication
@@ -103,6 +103,42 @@ public class StaffController {
 
 
     }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteStaff(
+            @PathVariable UUID id,
+            @RequestBody Map<String, String> updates,
+            Authentication authentication
+    ) {
+
+        try {
+
+            Staff staff = staffService.getStaffById( id);
+
+            if (staff.getRole() == StaffRole.MANAGER) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Can't delete manager account");
+            }
+
+            staffService.delete( staff.getId());
+
+            return ResponseEntity.ok("Staff deleted successfully");
+
+        } catch ( IllegalArgumentException e ) {
+            return ResponseEntity.badRequest()
+                    .body("Missing id");
+        } catch ( StaffNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error");
+        }
+
+    }
+
 
     private final StaffService staffService;
 

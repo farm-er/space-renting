@@ -59,6 +59,14 @@ public class StaffService {
                 .orElseThrow(() -> new StaffNotFoundException("Staff not found with email: " + email));
     }
 
+    public Staff save(Staff staff) {
+        return staffRepository.save(staff);
+    }
+
+    public void delete( UUID id) {
+        staffRepository.deleteById( id);
+    }
+
     private final StaffRepository staffRepository;
 
     private final PasswordEncoder passwordEncoder;
@@ -68,8 +76,5 @@ public class StaffService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Staff save(Staff staff) {
-        return staffRepository.save(staff);
-    }
 
 }
