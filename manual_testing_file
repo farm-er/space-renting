@@ -1,0 +1,30 @@
+curl -X POST http://localhost:8080/api/v1/auth/users/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "Oussama",
+    "lastName": "Majdouli",
+    "email": "oussama@example.com",
+    "password": "securePassword123",
+    "phoneNumber": "+212612345678"
+  }'
+
+
+curl -X POST http://localhost:8080/api/v1/auth/users/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "oussama@example.com",
+    "password": "securePassword123"
+  }'
+
+curl -X GET http://localhost:8080/api/v1/users/USER_ID_HERE \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+
+
+curl -X PATCH http://localhost:8080/api/v1/users/USER_ID_HERE \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "Oussama Updated",
+    "phoneNumber": "+212600000000"
+  }'
+

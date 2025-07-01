@@ -1,4 +1,4 @@
-package com.oussama.space_renting.controller;
+package com.oussama.space_renting.controller.auth;
 
 
 import com.oussama.space_renting.dto.AuthResponse;
@@ -34,7 +34,7 @@ public class UserAuthController {
      * To get a new token based on credentials
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginRequest loginRequest) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody UserLoginRequest loginRequest) {
         try {
             /*
              * Authenticate the user using the authentication created by the provider
@@ -79,7 +79,7 @@ public class UserAuthController {
      * Checks for already user email, phone number
      */
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody UserRegisterRequestDTO request) {
+    public ResponseEntity<UserRegisterResponseDTO> register(@Valid @RequestBody UserRegisterRequestDTO request) {
 
         try {
             UserDTO userDTO = userService.createUser( request);
@@ -116,7 +116,7 @@ public class UserAuthController {
      * Works if you want to know if you need to refresh your token for example
      */
     @PostMapping("/validate")
-    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String authHeader) {
         try {
             String token = authHeader.substring(7); // Remove "Bearer " prefix
             if (jwtUtil.validateToken(token)) {
