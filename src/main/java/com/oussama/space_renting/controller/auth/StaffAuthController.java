@@ -1,4 +1,4 @@
-package com.oussama.space_renting.controller;
+package com.oussama.space_renting.controller.auth;
 
 
 import com.oussama.space_renting.dto.AuthResponse;
@@ -6,19 +6,12 @@ import com.oussama.space_renting.dto.staff.StaffDTO;
 import com.oussama.space_renting.dto.staff.StaffLoginRequestDTO;
 import com.oussama.space_renting.dto.staff.StaffRegisterRequestDTO;
 import com.oussama.space_renting.dto.staff.StaffRegisterResponseDTO;
-import com.oussama.space_renting.dto.user.UserRegisterResponseDTO;
 import com.oussama.space_renting.exception.EmailAlreadyExistsException;
-import com.oussama.space_renting.model.Staff.Staff;
-import com.oussama.space_renting.model.Staff.StaffRole;
-import com.oussama.space_renting.model.Staff.StaffStatus;
-import com.oussama.space_renting.repository.StaffRepository;
 import com.oussama.space_renting.security.JwtUtil;
 import com.oussama.space_renting.service.StaffService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,8 +23,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;

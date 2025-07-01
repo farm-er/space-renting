@@ -6,6 +6,7 @@ import com.oussama.space_renting.dto.staff.StaffRegisterRequestDTO;
 import com.oussama.space_renting.dto.user.UserDTO;
 import com.oussama.space_renting.dto.user.UserRegisterRequestDTO;
 import com.oussama.space_renting.exception.EmailAlreadyExistsException;
+import com.oussama.space_renting.exception.UserNotFoundException;
 import com.oussama.space_renting.model.Staff.Staff;
 import com.oussama.space_renting.model.Staff.StaffRole;
 import com.oussama.space_renting.model.User.User;
@@ -53,7 +54,7 @@ public class UserService {
      */
     public User getUserById(UUID id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id.toString()));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id.toString()));
     }
 
     /*
@@ -61,7 +62,7 @@ public class UserService {
      */
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
     }
 
     /*
@@ -75,6 +76,10 @@ public class UserService {
         return userRepository.existsByPhoneNumber(phoneNumber);
     }
 
+
+    public User save(User user) {
+        return userRepository.save(user);
+    }
 
     private final UserRepository userRepository;
 
