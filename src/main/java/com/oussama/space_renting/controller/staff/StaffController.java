@@ -11,6 +11,7 @@ import com.oussama.space_renting.model.Staff.StaffStatus;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.service.StaffService;
 import com.oussama.space_renting.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/staff")
+@Tag(name = "Staff", description = "Operations for managing staff")
 public class StaffController {
 
     @PreAuthorize("hasRole('MANAGER') or hasRole('STAFF')")
@@ -101,7 +103,6 @@ public class StaffController {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Internal server error");
         }
-
 
     }
 

@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "spaces")
@@ -29,10 +30,10 @@ public class Space {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @NotBlank
-    @Size(max = 200)
+    @Size(max = 100)
     @Column(nullable = false)
     private String name;
 

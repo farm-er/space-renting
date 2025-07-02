@@ -1,5 +1,7 @@
 package com.oussama.space_renting.service;
 
+import com.oussama.space_renting.exception.SpaceNotFoundException;
+import com.oussama.space_renting.exception.StaffNotFoundException;
 import com.oussama.space_renting.model.space.Amenity;
 import com.oussama.space_renting.model.space.Space;
 import com.oussama.space_renting.model.space.SpaceType;
@@ -9,20 +11,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
+@Service
 public class SpaceService {
 
     @Autowired
     private SpaceRepository spaceRepository;
 
 
-    public List<Space> findByIsActive() {
-        return spaceRepository.findAll(SpaceSpecification.isActive());
+    public Space getSpaceById(UUID id) throws SpaceNotFoundException {
+        return spaceRepository.findById( id)
+                .orElseThrow(() -> new SpaceNotFoundException("Space not found with id: " + id));
     }
 
+    public Space save( Space space) {
+        return spaceRepository.save( space);
+    }
 
     public Page<Space> findSpacesWithFilters(
             String address,
@@ -37,8 +47,9 @@ public class SpaceService {
             String country,
             SpaceType type,
             Boolean availableOnly,
-            Pageable pageable) {
-
+            Boolean activeOnly,
+            Pageable pageable
+    ) {
         /*
          * Had to do something to initialize the specs
          */
@@ -78,6 +89,10 @@ public class SpaceService {
 
         if (availableOnly != null && availableOnly) {
             spec = spec.and(SpaceSpecification.isAvailable());
+        }
+
+        if (activeOnly != null && activeOnly) {
+            spec = spec.and(SpaceSpecification.isActive());
         }
         return spaceRepository.findAll(spec, pageable);
     }
