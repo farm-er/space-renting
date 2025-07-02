@@ -35,7 +35,7 @@ public class User {
      * Using UUID with GeneratedValue which supposed to work out of the box with UUID
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     /*

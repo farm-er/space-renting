@@ -1,8 +1,66 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <database name="space_renting_db" schema="public" type="PostgreSQL - 15.13 (Debian 15.13-1.pgdg120+1)">
    <tables>
-      <table name="staff" remarks="" schema="public" type="TABLE">
+      <table name="bookings" remarks="" schema="public" type="TABLE">
          <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="1" name="accepted_at" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="cancellation_reason" nullable="true" remarks="" size="500" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="3" name="cancelled_at" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="4" name="created_at" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="5" name="end_time" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="rejection_reason" nullable="true" remarks="" size="500" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="7" name="start_time" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="status" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="9" name="total_amount" nullable="false" remarks="" size="10" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="accepted_by" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="fk9h2wg6hjl0b949bslp745jhoj" implied="false" onDeleteCascade="false" schema="public" table="staff"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="renter_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="fkhi6uutgints5fj9cj244ecysh" implied="false" onDeleteCascade="false" schema="public" table="users"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="12" name="space_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="fkqarnfgv8hshhq9nho2wkq025m" implied="false" onDeleteCascade="false" schema="public" table="spaces"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="bookings_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <checkConstraint constraint="(((status)::text = ANY ((ARRAY['PENDING'::character varying, 'BOOKED'::character varying, 'REJECTED'::character varying, 'CANCELLED'::character varying])::text[])))" name="bookings_status_check"/>
+      </table>
+      <table name="spaces" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <child column="space_id" foreignKey="fkqarnfgv8hshhq9nho2wkq025m" implied="false" onDeleteCascade="false" schema="public" table="bookings"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="address" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="amenities" nullable="true" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="3" name="area" nullable="false" remarks="" size="8" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="4" name="available_in" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="capacity" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="city" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="country" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="8" name="created_at" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="description" nullable="false" remarks="" size="2000" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="10" name="discount" nullable="true" remarks="" size="3" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="image_urls" nullable="true" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="12" name="is_active" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="13" name="is_available" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="8" id="14" name="latitude" nullable="true" remarks="" size="10" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="8" id="15" name="longitude" nullable="true" remarks="" size="11" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="16" name="name" nullable="false" remarks="" size="100" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="17" name="postal_code" nullable="true" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="18" name="price_per_hour" nullable="false" remarks="" size="10" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="19" name="space_type" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="20" name="updated_at" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="spaces_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <checkConstraint constraint="(((space_type)::text = ANY ((ARRAY['OFFICE'::character varying, 'MEETING_ROOM'::character varying, 'COWORKING_SPACE'::character varying, 'EVENT_SPACE'::character varying, 'CONFERENCE_ROOM'::character varying, 'WORKSHOP_SPACE'::character varying])::text[])))" name="spaces_space_type_check"/>
+      </table>
+      <table name="staff" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <child column="accepted_by" foreignKey="fk9h2wg6hjl0b949bslp745jhoj" implied="false" onDeleteCascade="false" schema="public" table="bookings"/>
+         </column>
          <column autoUpdated="false" defaultValue="null" digits="6" id="1" name="created_at" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="email" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="first_name" nullable="false" remarks="" size="50" type="varchar" typeCode="12"/>
@@ -22,7 +80,9 @@
          <checkConstraint constraint="(((status &gt;= 0) AND (status &lt;= 1)))" name="staff_status_check"/>
       </table>
       <table name="users" remarks="" schema="public" type="TABLE">
-         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <child column="renter_id" foreignKey="fkhi6uutgints5fj9cj244ecysh" implied="false" onDeleteCascade="false" schema="public" table="bookings"/>
+         </column>
          <column autoUpdated="false" defaultValue="null" digits="6" id="1" name="created_at" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="email" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="first_name" nullable="false" remarks="" size="50" type="varchar" typeCode="12"/>

@@ -1,2 +1,4 @@
+bookings
 users
 staff
+spaces
