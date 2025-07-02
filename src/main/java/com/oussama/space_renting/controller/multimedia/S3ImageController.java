@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +20,7 @@ public class S3ImageController {
 
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
             if (file.isEmpty()) {
@@ -55,38 +57,7 @@ public class S3ImageController {
         }
     }
 
-    @GetMapping("/url/{id}")
-    public ResponseEntity<Map<String, String>> getImageUrl(@PathVariable UUID id) {
-        try {
-
-            String url = supabaseImageStorage.getPublicUrl(id.toString());
-            return ResponseEntity.ok(Map.of("url", url));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to get image URL"));
-        }
-    }
-
-
     @Autowired
     private SupabaseImageStorage supabaseImageStorage;
 
 }
-
-
-//    @DeleteMapping("/{fileName}")
-//    public ResponseEntity<Map<String, String>> deleteImage(@PathVariable String fileName) {
-//        try {
-//            if (!supabaseS3Service.imageExists(fileName)) {
-//                return ResponseEntity.notFound()
-//                        .body(Map.of("error", "Image not found"));
-//            }
-//
-//            supabaseS3Service.deleteImage(fileName);
-//            return ResponseEntity.ok(Map.of("message", "Image deleted successfully"));
-//
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(Map.of("error", "Failed to delete image: " + e.getMessage()));
-//        }
-//    }
