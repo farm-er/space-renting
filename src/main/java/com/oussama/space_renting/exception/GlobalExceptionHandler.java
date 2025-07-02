@@ -34,8 +34,23 @@ public class GlobalExceptionHandler {
      * TODO: check by cases for every field that can throw this exception
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<?> handleDataintegrityViolation(DataIntegrityViolationException ex) {
-        return ResponseEntity.badRequest().body("Invalid input");
+    public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+
+        String cause = ex.getMostSpecificCause().getMessage();
+
+        String field = null;
+        // I NEED TO ADD EVERY FIELD THAT HAS A CONSTRAINT THAT CAN BE VIOLATED IN CREATION
+        if ( cause.contains("email")) {
+            field = "email";
+        } else if (cause.contains("phone_number")) {
+            field = "phone_number";
+        }
+
+        if (field == null) {
+            return ResponseEntity.badRequest().body("Duplicate entry");
+        }
+
+        return ResponseEntity.badRequest().body("Duplicate entry: " + field);
     }
 
 
