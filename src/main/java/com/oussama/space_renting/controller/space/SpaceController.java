@@ -7,6 +7,7 @@ import com.oussama.space_renting.exception.SpaceNotFoundException;
 import com.oussama.space_renting.exception.StaffNotFoundException;
 import com.oussama.space_renting.exception.UserNotFoundException;
 import com.oussama.space_renting.model.Staff.Staff;
+import com.oussama.space_renting.model.Staff.StaffRole;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.model.space.Amenity;
 import com.oussama.space_renting.model.space.Space;
@@ -43,10 +44,11 @@ public class SpaceController {
 
 
     @Operation(
-            summary = "Gets all spaces",
+            summary = "Gets all spaces satisfying some filters",
             description = "Gets all spaces but with custom filters",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Returns list of spaces")
+                    @ApiResponse(responseCode = "200", description = "Returns list of spaces"),
+                    @ApiResponse(responseCode = "500", description = "internal server error"),
             }
     )
     @GetMapping
@@ -102,34 +104,40 @@ public class SpaceController {
             Authentication authentication
     ) {
 
-        Sort sort = Sort.by(
-                sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
-                sortBy
-        );
+        try {
 
-        // Create pageable object
-        Pageable pageable = PageRequest.of(page, size, sort);
+            Sort sort = Sort.by(
+                    sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
+                    sortBy
+            );
 
-        boolean isManager = authentication.getAuthorities().stream()
-                .anyMatch(authority ->
-                        authority.getAuthority().equals("ROLE_MANAGER")
-                );
+            // Create pageable object
+            Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Space> spaces = spaceService.findSpacesWithFilters(
-                address, amenity, minPrice, maxPrice, minArea, maxArea,
-                minCapacity, maxCapacity, city, country, type, availableOnly, !isManager, pageable
-        );
+            boolean isManager = authentication.getAuthorities().stream()
+                    .anyMatch(authority ->
+                            authority.getAuthority().equals("ROLE_MANAGER")
+                    );
 
+            Page<Space> spaces = spaceService.findSpacesWithFilters(
+                    address, amenity, minPrice, maxPrice, minArea, maxArea,
+                    minCapacity, maxCapacity, city, country, type, availableOnly, !isManager, pageable
+            );
 
-        return ResponseEntity.ok(spaces);
+            return ResponseEntity.ok(spaces);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error");
+        }
     }
 
     @Operation(
             summary = "get space",
             description = "get space",
             responses = {
-//                    @ApiResponse(responseCode = "201", description = "Space created successfully"),
-//                    @ApiResponse(responseCode = "400", description = "Invalid input")
+                    @ApiResponse(responseCode = "200", description = "Returned results successfully"),
+                    @ApiResponse(responseCode = "500", description = "internal server error")
             }
     )
     @GetMapping("/{id}")
@@ -160,37 +168,45 @@ public class SpaceController {
             description = "Creates a space that can be rented by users.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Space created successfully"),
+                    @ApiResponse(responseCode = "500", description = "internal server error")
+
             }
     )
+
     @PreAuthorize("hasRole('MANAGER')")
     @PostMapping
     public ResponseEntity<?> createSpace(
             @Valid @RequestBody CreateSpaceDTO createSpaceDTO
     ) {
+        try {
 
+            Space space = Space.builder()
+                    .name( createSpaceDTO.getName())
+                    .description( createSpaceDTO.getDescription())
+                    .spaceType( createSpaceDTO.getType())
+                    .amenities( createSpaceDTO.getAmenities())
+                    .country( createSpaceDTO.getCountry())
+                    .city( createSpaceDTO.getCity())
+                    .address( createSpaceDTO.getAddress())
+                    .postalCode( createSpaceDTO.getPostalCode())
+                    .capacity(createSpaceDTO.getCapacity())
+                    .area( createSpaceDTO.getArea())
+                    .pricePerHour( createSpaceDTO.getPricePerHour())
+                    .discount( createSpaceDTO.getDiscount())
+                    .longitude( createSpaceDTO.getLongitude())
+                    .latitude( createSpaceDTO.getLatitude())
+                    .availableIn( LocalDateTime.now())
+                    .imageUrls( createSpaceDTO.getImageUrls())
+                    .build();
 
-        Space space = Space.builder()
-                .name( createSpaceDTO.getName())
-                .description( createSpaceDTO.getDescription())
-                .spaceType( createSpaceDTO.getType())
-                .amenities( createSpaceDTO.getAmenities())
-                .country( createSpaceDTO.getCountry())
-                .city( createSpaceDTO.getCity())
-                .address( createSpaceDTO.getAddress())
-                .postalCode( createSpaceDTO.getPostalCode())
-                .capacity(createSpaceDTO.getCapacity())
-                .area( createSpaceDTO.getArea())
-                .pricePerHour( createSpaceDTO.getPricePerHour())
-                .discount( createSpaceDTO.getDiscount())
-                .longitude( createSpaceDTO.getLongitude())
-                .latitude( createSpaceDTO.getLatitude())
-                .availableIn( LocalDateTime.now())
-                .imageUrls( createSpaceDTO.getImageUrls())
-                .build();
+            Space savedSpace = spaceService.save( space);
 
-        Space savedSpace = spaceService.save( space);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedSpace);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedSpace);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error");
+        }
     }
 
     @Operation(
@@ -198,8 +214,10 @@ public class SpaceController {
             description = "Updates space's information, you can only update these fields" +
                     "( name, description, amenities, pricePerHour, area, capacity)",
             responses = {
-//                    @ApiResponse(responseCode = "201", description = "Space created successfully"),
-//                    @ApiResponse(responseCode = "400", description = "Invalid input")
+                    @ApiResponse(responseCode = "200", description = "Space updated successfully"),
+                    @ApiResponse(responseCode = "404", description = "Space with the provided id was not found"),
+                    @ApiResponse(responseCode = "400", description = "Missing id"),
+                    @ApiResponse(responseCode = "500", description = "internal server error")
             }
     )
     @PreAuthorize("hasRole('MANAGER')")
@@ -249,8 +267,9 @@ public class SpaceController {
             summary = "Deletes space from db",
             description = "Delete space from db",
             responses = {
-//                    @ApiResponse(responseCode = "201", description = "Space created successfully"),
-//                    @ApiResponse(responseCode = "400", description = "Invalid input")
+                    @ApiResponse(responseCode = "200", description = "Space deleted successfully"),
+                    @ApiResponse(responseCode = "400", description = "Missing id"),
+                    @ApiResponse(responseCode = "500", description = "internal server error")
             }
     )
     @PreAuthorize("hasRole('MANAGER')")
@@ -258,9 +277,99 @@ public class SpaceController {
     public ResponseEntity<?> deleteSpace(
             @PathVariable UUID id
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body("Space updated successfully");
+        try {
+
+            spaceService.delete( id);
+
+            return ResponseEntity.ok("Space deleted successfully");
+
+        } catch ( IllegalArgumentException e ) {
+            return ResponseEntity.badRequest()
+                    .body("Missing id");
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error");
+        }
     }
 
+
+    @Operation(
+            summary = "Deactivate space",
+            description = "Set the space to Inactive so it becomes invisible to normal user",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Space deactivated successfully"),
+                    @ApiResponse(responseCode = "404", description = "Space with the provided id was not found"),
+                    @ApiResponse(responseCode = "400", description = "Missing id"),
+                    @ApiResponse(responseCode = "500", description = "internal server error")
+            }
+    )
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @PostMapping("/{id}/deactivate")
+    public ResponseEntity<?> deactivateSpace(
+            @PathVariable UUID id
+    ) {
+
+
+        try {
+
+            spaceService.updateIsActive( id, false);
+
+
+            return ResponseEntity.ok("Space deactivated successfully");
+
+        } catch ( IllegalArgumentException e ) {
+            return ResponseEntity.badRequest()
+                    .body("Missing id");
+        } catch ( SpaceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error");
+        }
+    }
+
+
+    @Operation(
+            summary = "Activate space",
+            description = "Set the space to active for users to see",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Space activated successfully"),
+                    @ApiResponse(responseCode = "404", description = "Space with the provided id was not found"),
+                    @ApiResponse(responseCode = "400", description = "Missing id"),
+                    @ApiResponse(responseCode = "500", description = "internal server error")
+            }
+    )
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @PostMapping("/{id}/activate")
+    public ResponseEntity<?> activateSpace(
+            @PathVariable UUID id
+    ) {
+
+
+        try {
+
+            spaceService.updateIsActive( id, true);
+
+
+            return ResponseEntity.ok("Space activated successfully");
+
+        } catch ( IllegalArgumentException e ) {
+            return ResponseEntity.badRequest()
+                    .body("Missing id");
+        } catch ( SpaceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error");
+        }
+    }
 
     private final SpaceService spaceService;
 

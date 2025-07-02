@@ -33,6 +33,17 @@ public class SpaceService {
     public Space save( Space space) {
         return spaceRepository.save( space);
     }
+    public void delete( UUID id) {
+        spaceRepository.deleteById( id);
+    }
+
+    public void updateIsActive(UUID id, boolean isActive) throws SpaceNotFoundException {
+        int result = spaceRepository.updateIsActive( id, isActive);
+        if ( result != 1) {
+            throw new SpaceNotFoundException("Couldn't find space with id: "+id);
+        }
+    }
+
 
     public Page<Space> findSpacesWithFilters(
             String address,
