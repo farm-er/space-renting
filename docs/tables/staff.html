@@ -211,6 +211,23 @@
                                     <td></td>
                                 </tr>
                                 <tr>
+                                    <td><span id="role">role</span></td>
+                                    <td>varchar</td>
+                                    <td>255</td>
+                                    <td title=''></td>
+                                    <td title=''></td>
+                                    <td>null</td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
+                                        </table>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
                                     <td><span id="status">status</span></td>
                                     <td>int2</td>
                                     <td>5</td>
@@ -318,6 +335,10 @@
                                     <td>staff_status_check</td>
                                     <td>(((status &gt;&#61; 0) AND (status &lt;&#61; 1)))</td>
                                 </tr>
+                                <tr>
+                                    <td>staff_role_check</td>
+                                    <td>(((role)::text &#61; ANY ((ARRAY[&#39;STAFF&#39;::character varying, &#39;MANAGER&#39;::character varying])::text[])))</td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -340,7 +361,7 @@
                                 <div class="tab-content no-padding">
                                     <div class="chart tab-pane active" id="oneDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="staff.html" target="_top" title="staff" alt="" coords="5,5,311,309">
+<area shape="rect" id="node1" href="staff.html" target="_top" title="staff" alt="" coords="5,5,311,339">
 </map>
                                         <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/staff.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>

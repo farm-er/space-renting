@@ -6,6 +6,7 @@ import com.oussama.space_renting.exception.EmailAlreadyExistsException;
 import com.oussama.space_renting.exception.StaffNotFoundException;
 import com.oussama.space_renting.model.Staff.Staff;
 import com.oussama.space_renting.model.Staff.StaffRole;
+import com.oussama.space_renting.model.Staff.StaffStatus;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.repository.StaffRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -65,6 +66,13 @@ public class StaffService {
 
     public void delete( UUID id) {
         staffRepository.deleteById( id);
+    }
+
+    public void updateStatus(UUID id, StaffStatus status) throws StaffNotFoundException {
+        int result = staffRepository.updateStatus( id, status);
+        if ( result != 1) {
+            throw new StaffNotFoundException("Couldn't find staff with id: "+id);
+        }
     }
 
     private final StaffRepository staffRepository;
