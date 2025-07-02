@@ -1,7 +1,6 @@
 package com.oussama.space_renting.model.space;
 
-import com.oussama.space_renting.model.booking.Booking;
-import com.oussama.space_renting.model.review.Review;
+
 import com.oussama.space_renting.util.AmenitySetConverter;
 import com.oussama.space_renting.util.StringListConverter;
 import jakarta.persistence.*;
@@ -112,10 +111,10 @@ public class Space {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Booking> bookings;
-
-    @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Review> reviews;
+//    @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<Booking> bookings;
+//
+//    @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<Review> reviews;
 
 }
