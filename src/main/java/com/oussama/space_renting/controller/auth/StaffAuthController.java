@@ -2,10 +2,7 @@ package com.oussama.space_renting.controller.auth;
 
 
 import com.oussama.space_renting.dto.AuthResponse;
-import com.oussama.space_renting.dto.staff.StaffDTO;
-import com.oussama.space_renting.dto.staff.StaffLoginRequestDTO;
-import com.oussama.space_renting.dto.staff.StaffRegisterRequestDTO;
-import com.oussama.space_renting.dto.staff.StaffRegisterResponseDTO;
+import com.oussama.space_renting.dto.staff.*;
 import com.oussama.space_renting.exception.EmailAlreadyExistsException;
 import com.oussama.space_renting.security.JwtUtil;
 import com.oussama.space_renting.service.StaffService;
@@ -59,14 +56,6 @@ public class StaffAuthController {
                             .staff(null)
                             .build()
                     );
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body( StaffRegisterResponseDTO.builder()
-                            .message("Internal server error")
-                            .staff(null)
-                            .build()
-                    );
         }
     }
 
@@ -98,7 +87,12 @@ public class StaffAuthController {
              */
             final String jwt = jwtUtil.generateToken(userDetails, Map.of("role", role));
 
-            return ResponseEntity.ok( AuthResponse.builder().message("Login Successful").token(jwt).build());
+            return ResponseEntity.ok( StaffLoginResponseDTO.builder()
+                    .message("Login Successful")
+                    .token(jwt)
+                    .role(role)
+                    .build()
+            );
 
         }  catch (BadCredentialsException  e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -109,11 +103,6 @@ public class StaffAuthController {
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body( AuthResponse.builder().message("Authentication failed").token(null).build());
-        } catch (Exception e) {
-            // Log unexpected errors
-            System.out.println("Unexpected error during staff login" + e.getMessage());
-            return ResponseEntity.internalServerError()
-                    .body(AuthResponse.builder().message("Internal server error").token(null).build());
         }
 
     }

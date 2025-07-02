@@ -104,32 +104,26 @@ public class SpaceController {
             Authentication authentication
     ) {
 
-        try {
 
-            Sort sort = Sort.by(
-                    sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
-                    sortBy
-            );
+        Sort sort = Sort.by(
+                sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
+                sortBy
+        );
 
-            // Create pageable object
-            Pageable pageable = PageRequest.of(page, size, sort);
+        // Create pageable object
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-            boolean isManager = authentication.getAuthorities().stream()
-                    .anyMatch(authority ->
-                            authority.getAuthority().equals("ROLE_MANAGER")
-                    );
+        boolean isManager = authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_MANAGER")
+                );
 
-            Page<Space> spaces = spaceService.findSpacesWithFilters(
-                    address, amenity, minPrice, maxPrice, minArea, maxArea,
-                    minCapacity, maxCapacity, city, country, type, availableOnly, !isManager, pageable
-            );
+        Page<Space> spaces = spaceService.findSpacesWithFilters(
+                address, amenity, minPrice, maxPrice, minArea, maxArea,
+                minCapacity, maxCapacity, city, country, type, availableOnly, !isManager, pageable
+        );
 
-            return ResponseEntity.ok(spaces);
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Internal server error");
-        }
+        return ResponseEntity.ok(spaces);
     }
 
     @Operation(
@@ -156,10 +150,6 @@ public class SpaceController {
         } catch ( SpaceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Internal server error");
         }
     }
 
@@ -178,35 +168,29 @@ public class SpaceController {
     public ResponseEntity<?> createSpace(
             @Valid @RequestBody CreateSpaceDTO createSpaceDTO
     ) {
-        try {
 
-            Space space = Space.builder()
-                    .name( createSpaceDTO.getName())
-                    .description( createSpaceDTO.getDescription())
-                    .spaceType( createSpaceDTO.getType())
-                    .amenities( createSpaceDTO.getAmenities())
-                    .country( createSpaceDTO.getCountry())
-                    .city( createSpaceDTO.getCity())
-                    .address( createSpaceDTO.getAddress())
-                    .postalCode( createSpaceDTO.getPostalCode())
-                    .capacity(createSpaceDTO.getCapacity())
-                    .area( createSpaceDTO.getArea())
-                    .pricePerHour( createSpaceDTO.getPricePerHour())
-                    .discount( createSpaceDTO.getDiscount())
-                    .longitude( createSpaceDTO.getLongitude())
-                    .latitude( createSpaceDTO.getLatitude())
-                    .availableIn( LocalDateTime.now())
-                    .imageUrls( createSpaceDTO.getImageUrls())
-                    .build();
+        Space space = Space.builder()
+                .name( createSpaceDTO.getName())
+                .description( createSpaceDTO.getDescription())
+                .spaceType( createSpaceDTO.getType())
+                .amenities( createSpaceDTO.getAmenities())
+                .country( createSpaceDTO.getCountry())
+                .city( createSpaceDTO.getCity())
+                .address( createSpaceDTO.getAddress())
+                .postalCode( createSpaceDTO.getPostalCode())
+                .capacity(createSpaceDTO.getCapacity())
+                .area( createSpaceDTO.getArea())
+                .pricePerHour( createSpaceDTO.getPricePerHour())
+                .discount( createSpaceDTO.getDiscount())
+                .longitude( createSpaceDTO.getLongitude())
+                .latitude( createSpaceDTO.getLatitude())
+                .availableIn( LocalDateTime.now())
+                .imageUrls( createSpaceDTO.getImageUrls())
+                .build();
 
-            Space savedSpace = spaceService.save( space);
+        Space savedSpace = spaceService.save( space);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedSpace);
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Internal server error");
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedSpace);
     }
 
     @Operation(
@@ -255,10 +239,6 @@ public class SpaceController {
         } catch ( SpaceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Internal server error");
         }
     }
 
@@ -286,10 +266,6 @@ public class SpaceController {
         } catch ( IllegalArgumentException e ) {
             return ResponseEntity.badRequest()
                     .body("Missing id");
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Internal server error");
         }
     }
 
@@ -325,10 +301,6 @@ public class SpaceController {
         } catch ( SpaceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Internal server error");
         }
     }
 
@@ -364,10 +336,6 @@ public class SpaceController {
         } catch ( SpaceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Internal server error");
         }
     }
 

@@ -1,3 +1,9 @@
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+import java.util.UUID;
+
 //package com.oussama.space_renting.model.review;
 //
 //import com.oussama.space_renting.model.User.User;
@@ -21,9 +27,9 @@
 //@AllArgsConstructor
 //@Builder
 //public class Review {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
+//@Id
+//@GeneratedValue(strategy = GenerationType.UUID)
+//private UUID id;
 //
 //    @NotNull
 //    @Min(1)

@@ -20,7 +20,7 @@ import java.util.UUID;
 @Builder
 public class Staff {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @NotBlank

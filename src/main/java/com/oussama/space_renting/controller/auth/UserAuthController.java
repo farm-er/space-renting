@@ -76,11 +76,6 @@ public class UserAuthController {
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body( AuthResponse.builder().message("Authentication failed").token(null).build());
-        } catch (Exception e) {
-            // Log unexpected errors
-            System.out.println("Unexpected error during user login" + e.getMessage());
-            return ResponseEntity.internalServerError()
-                    .body(AuthResponse.builder().message("Internal server error").token(null).build());
         }
     }
 
@@ -113,15 +108,8 @@ public class UserAuthController {
                             .user(null)
                             .build()
                     );
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(UserRegisterResponseDTO.builder()
-                            .message("Internal server error")
-                            .user(null)
-                            .build()
-                    );
         }
+
 
     }
 

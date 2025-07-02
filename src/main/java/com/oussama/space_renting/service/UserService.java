@@ -12,6 +12,8 @@ import com.oussama.space_renting.model.Staff.StaffRole;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +49,12 @@ public class UserService {
                 .isVerified(savedUser.getIsVerified())
                 .createdAt(savedUser.getCreatedAt())
                 .build();
+    }
+
+    public Page<User> getUsers(
+            Pageable pageable
+    ) {
+        return userRepository.findAll( pageable);
     }
 
     /*

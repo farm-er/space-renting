@@ -1,3 +1,9 @@
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+import java.util.UUID;
+
 //package com.oussama.space_renting.model.payment;
 //
 //import com.oussama.space_renting.model.booking.Booking;
@@ -18,9 +24,9 @@
 //@AllArgsConstructor
 //@Builder
 //public class Payment {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
+    //@Id
+    //@GeneratedValue(strategy = GenerationType.UUID)
+    //private UUID id;
 //
 //    @NotNull
 //    @Column(nullable = false, precision = 10, scale = 2)
