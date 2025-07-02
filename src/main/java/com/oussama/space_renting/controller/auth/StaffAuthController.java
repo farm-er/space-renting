@@ -56,14 +56,6 @@ public class StaffAuthController {
                             .staff(null)
                             .build()
                     );
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body( StaffRegisterResponseDTO.builder()
-                            .message("Internal server error")
-                            .staff(null)
-                            .build()
-                    );
         }
     }
 
@@ -111,11 +103,6 @@ public class StaffAuthController {
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body( AuthResponse.builder().message("Authentication failed").token(null).build());
-        } catch (Exception e) {
-            // Log unexpected errors
-            System.out.println("Unexpected error during staff login" + e.getMessage());
-            return ResponseEntity.internalServerError()
-                    .body(AuthResponse.builder().message("Internal server error").token(null).build());
         }
 
     }
