@@ -1,7 +1,6 @@
 package com.oussama.space_renting.model.User;
 
-import com.oussama.space_renting.model.booking.Booking;
-import com.oussama.space_renting.model.review.Review;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -101,13 +100,13 @@ public class User {
     /*
      * Bookings done by this user
      */
-    @OneToMany(mappedBy = "renter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Booking> bookings;
-
-    /*
-     * Reviews posted by the user
-     */
-    @OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Review> reviewsGiven;
+//    @OneToMany(mappedBy = "renter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<Booking> bookings;
+//
+//    /*
+//     * Reviews posted by the user
+//     */
+//    @OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<Review> reviewsGiven;
 
 }

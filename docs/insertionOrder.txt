@@ -1,6 +1,2 @@
-spaces
-users
-bookings
-payments
-reviews
 staff
+users
