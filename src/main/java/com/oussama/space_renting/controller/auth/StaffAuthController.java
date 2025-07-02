@@ -2,10 +2,7 @@ package com.oussama.space_renting.controller.auth;
 
 
 import com.oussama.space_renting.dto.AuthResponse;
-import com.oussama.space_renting.dto.staff.StaffDTO;
-import com.oussama.space_renting.dto.staff.StaffLoginRequestDTO;
-import com.oussama.space_renting.dto.staff.StaffRegisterRequestDTO;
-import com.oussama.space_renting.dto.staff.StaffRegisterResponseDTO;
+import com.oussama.space_renting.dto.staff.*;
 import com.oussama.space_renting.exception.EmailAlreadyExistsException;
 import com.oussama.space_renting.security.JwtUtil;
 import com.oussama.space_renting.service.StaffService;
@@ -98,7 +95,12 @@ public class StaffAuthController {
              */
             final String jwt = jwtUtil.generateToken(userDetails, Map.of("role", role));
 
-            return ResponseEntity.ok( AuthResponse.builder().message("Login Successful").token(jwt).build());
+            return ResponseEntity.ok( StaffLoginResponseDTO.builder()
+                    .message("Login Successful")
+                    .token(jwt)
+                    .role(role)
+                    .build()
+            );
 
         }  catch (BadCredentialsException  e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

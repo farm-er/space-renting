@@ -1,4 +1,4 @@
-package com.oussama.space_renting.dto;
+package com.oussama.space_renting.dto.staff;
 
 
 import lombok.AllArgsConstructor;
@@ -10,7 +10,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
-public class AuthResponse {
+public class StaffLoginResponseDTO {
     private String message;
+    private String role;
     private String token;
 }
