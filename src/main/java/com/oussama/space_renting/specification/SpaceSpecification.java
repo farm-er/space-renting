@@ -5,6 +5,7 @@ import com.oussama.space_renting.model.space.Space;
 import com.oussama.space_renting.model.space.SpaceType;
 import jakarta.persistence.metamodel.SetAttribute;
 import jakarta.persistence.metamodel.SingularAttribute;
+import jakarta.persistence.metamodel.StaticMetamodel;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -93,6 +94,7 @@ public class SpaceSpecification {
 }
 
 
+@StaticMetamodel(Space.class)
 class Space_ {
     public static volatile SingularAttribute<Space, BigDecimal> pricePerHour;
     public static volatile SingularAttribute<Space, BigDecimal> area;
