@@ -101,6 +101,12 @@
 
 		<!--  -->
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-hateoas</artifactId>
+		</dependency>
+
+
 		<!-- For supabase since it's s3 compatible -->
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
@@ -148,6 +154,17 @@
 			<artifactId>mockito-core</artifactId>
 			<version>5.18.0</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-processor</artifactId>
+			<version>7.0.4.Final</version>
 		</dependency>
 
 
@@ -270,12 +287,19 @@
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
 						</path>
+						<path>
+							<groupId>org.hibernate</groupId>
+							<artifactId>hibernate-jpamodelgen</artifactId>
+							<version>7.0.4.Final</version>
+						</path>
 					</annotationProcessorPaths>
 					<compilerArgs>
 						<arg>-parameters</arg>
 					</compilerArgs>
 				</configuration>
 			</plugin>
+
+
 
 		</plugins>
 	</build>

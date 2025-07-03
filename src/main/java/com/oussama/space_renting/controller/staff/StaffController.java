@@ -11,7 +11,12 @@ import com.oussama.space_renting.model.Staff.StaffStatus;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.service.StaffService;
 import com.oussama.space_renting.service.UserService;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +30,32 @@ import java.util.UUID;
 @RequestMapping("/api/v1/staff")
 @Tag(name = "Staff", description = "Operations for managing staff")
 public class StaffController {
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @GetMapping
+    public ResponseEntity<?> getAllStaff(
+            @Parameter(description = "Page number (0...N)")
+            @RequestParam(required = false, defaultValue = "0") int page,
+
+            @Parameter(description = "Number of items per page")
+            @RequestParam(required = false, defaultValue = "10") int size,
+
+            @Parameter(description = "Sort direction (asc or desc)")
+            @RequestParam(required = false, defaultValue = "desc") String sortDir
+    ) {
+
+        Sort sort = Sort.by(
+                sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
+                "createdAt"
+        );
+
+        // Create pageable object
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Staff> staffTeam = staffService.getAllStaff( pageable);
+
+        return ResponseEntity.ok(staffTeam);
+    }
 
     @PreAuthorize("hasRole('MANAGER') or hasRole('STAFF')")
     @GetMapping("/{id}")
@@ -102,7 +133,6 @@ public class StaffController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteStaff(
             @PathVariable UUID id,
-            @RequestBody Map<String, String> updates,
             Authentication authentication
     ) {
 
@@ -129,7 +159,7 @@ public class StaffController {
 
     }
 
-    @PreAuthorize("hasRole('MANAGER)")
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/suspend/{id}")
     public ResponseEntity<?> suspendStaff(
             @PathVariable UUID id,
@@ -161,7 +191,7 @@ public class StaffController {
     }
 
 
-    @PreAuthorize("hasRole('MANAGER)")
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/activate/{id}")
     public ResponseEntity<?> activateStaff(
             @PathVariable UUID id,
@@ -174,12 +204,12 @@ public class StaffController {
 
             if (staff.getRole() == StaffRole.MANAGER) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body("Can't suspend manager account");
+                        .body("Can't activate manager account");
             }
 
             staffService.updateStatus( staff.getId(), StaffStatus.ACTIVE);
 
-            return ResponseEntity.ok("Staff suspended successfully");
+            return ResponseEntity.ok("Staff activated successfully");
 
         } catch ( IllegalArgumentException e ) {
             return ResponseEntity.badRequest()

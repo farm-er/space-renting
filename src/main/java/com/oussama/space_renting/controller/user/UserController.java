@@ -90,6 +90,8 @@ public class UserController {
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toSet());
 
+            System.out.println("roles " + roles);
+
             if (roles.contains("ROLE_MANAGER")) {
 
                 Sort sort = Sort.by(

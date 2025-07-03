@@ -1,15 +1,13 @@
 package com.oussama.space_renting.specification;
 
 
-import com.oussama.space_renting.model.Staff.Staff;
+import com.oussama.space_renting.model.booking.Booking_;
 import com.oussama.space_renting.model.booking.Booking;
 import com.oussama.space_renting.model.booking.BookingStatus;
-import com.oussama.space_renting.model.space.Space;
-import jakarta.persistence.metamodel.SingularAttribute;
-import jakarta.persistence.metamodel.StaticMetamodel;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class BookingSpecification {
@@ -24,6 +22,16 @@ public class BookingSpecification {
                 criteriaBuilder.between( root.get( Booking_.totalAmount), minTotal, maxTotal);
     }
 
+    public static Specification<Booking> startBefore(LocalDateTime start) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.greaterThan( root.get( Booking_.endTime), start);
+    }
+
+    public static Specification<Booking> endAfter(LocalDateTime end) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.lessThan( root.get( Booking_.startTime), end);
+    }
+
     public static Specification<Booking> isProcessedBy(UUID staffId) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get( Booking_.processedBy).get("id"), staffId);
@@ -34,13 +42,11 @@ public class BookingSpecification {
                 criteriaBuilder.equal(root.get( Booking_.space).get("id"), spaceId);
     }
 
+    public static Specification<Booking> hasRenter(UUID renterId) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get( Booking_.renter).get("id"), renterId);
+    }
+
 }
 
 
-@StaticMetamodel(Booking.class)
-class Booking_ {
-    public static volatile SingularAttribute<Booking, BigDecimal> totalAmount;
-    public static volatile SingularAttribute<Booking, BookingStatus> status;
-    public static volatile SingularAttribute<Booking, Staff> processedBy;
-    public static volatile SingularAttribute<Booking, Space> space;
-}

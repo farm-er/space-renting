@@ -9,6 +9,9 @@ import com.oussama.space_renting.model.Staff.StaffRole;
 import com.oussama.space_renting.model.Staff.StaffStatus;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.repository.StaffRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -50,9 +53,13 @@ public class StaffService {
         return staffRepository.existsByEmail(email);
     }
 
+    public Page<Staff> getAllStaff(Pageable pageable) {
+        return staffRepository.findAll( pageable);
+    }
+
     public Staff getStaffById(UUID id) throws StaffNotFoundException{
         return staffRepository.findById(id)
-                .orElseThrow(() -> new StaffNotFoundException("Staff not found with id: " + id.toString()));
+                .orElseThrow(() -> new StaffNotFoundException("Staff not found with id: " + id));
     }
 
     public Staff getStaffByEmail(String email) throws StaffNotFoundException{
@@ -68,6 +75,7 @@ public class StaffService {
         staffRepository.deleteById( id);
     }
 
+    @Transactional
     public void updateStatus(UUID id, StaffStatus status) throws StaffNotFoundException {
         int result = staffRepository.updateStatus( id, status);
         if ( result != 1) {

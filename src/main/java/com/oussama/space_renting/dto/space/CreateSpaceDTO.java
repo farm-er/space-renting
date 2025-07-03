@@ -65,7 +65,7 @@ public class CreateSpaceDTO {
     @NotBlank(message = "Address is required")
     @Size(min = 5, max = 200, message = "Address must be between 5 and 200 characters")
     @Schema(description = "Street address of the space",
-            example = "123 Boulevard Mohammed V, Casablanca")
+            example = "123Boulevard MohammedV,Casablanca")
     private String address;
 
     @NotBlank(message = "City is required")
@@ -99,7 +99,7 @@ public class CreateSpaceDTO {
     @Size(max = 20, message = "Cannot have more than 20 amenities")
     @Builder.Default
     @Schema(description = "Set of amenities available in the space",
-            example = "[\"WIFI\", \"PARKING\", \"AIR_CONDITIONING\"]")
+            example = "[\"HIGH_SPEED_WIFI\", \"ERGONOMIC_CHAIRS\", \"STANDING_DESKS\"]")
     private Set<Amenity> amenities = Set.of();
 
 

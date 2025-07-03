@@ -1,7 +1,6 @@
 package com.oussama.space_renting.service;
 
 import com.oussama.space_renting.exception.SpaceNotFoundException;
-import com.oussama.space_renting.exception.StaffNotFoundException;
 import com.oussama.space_renting.model.space.Amenity;
 import com.oussama.space_renting.model.space.Space;
 import com.oussama.space_renting.model.space.SpaceType;
@@ -14,8 +13,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -61,9 +58,7 @@ public class SpaceService {
             Boolean activeOnly,
             Pageable pageable
     ) {
-        /*
-         * Had to do something to initialize the specs
-         */
+
         Specification<Space> spec = (root, query, cb) -> null;
 
         if (address != null && !address.trim().isEmpty()) {
@@ -107,4 +102,6 @@ public class SpaceService {
         }
         return spaceRepository.findAll(spec, pageable);
     }
+
+
 }

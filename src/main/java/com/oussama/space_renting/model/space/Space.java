@@ -50,7 +50,7 @@ public class Space {
     private BigDecimal pricePerHour;
 
     @Builder.Default
-    @Column( nullable = true, precision = 3, scale = 2)
+    @Column( nullable = true, precision = 5, scale = 2)
     private BigDecimal discount = null;
 
     @DecimalMin("0.0")

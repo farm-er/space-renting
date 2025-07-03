@@ -53,9 +53,8 @@ public class Booking {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "accepted_at")
-    private LocalDateTime acceptedAt;
+    @Column(name = "processed_at")
+    private LocalDateTime processedAt;
 
     @Column(name = "cancelled_at")
     private LocalDateTime cancelledAt;
@@ -64,13 +63,23 @@ public class Booking {
     @JoinColumn(name = "processed_by")
     private Staff processedBy;
 
+    @Column(name = "processed_by", insertable = false, updatable = false)
+    private UUID processedById;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "space_id", nullable = false)
     private Space space;
 
+    @Column(name = "space_id", insertable = false, updatable = false)
+    private UUID spaceId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "renter_id", nullable = false)
     private User renter;
+
+    @Column(name = "renter_id", insertable = false, updatable = false)
+    private UUID renterId;
+
 
 //    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    private Payment payment;

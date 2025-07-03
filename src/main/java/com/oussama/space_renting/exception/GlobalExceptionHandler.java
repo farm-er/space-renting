@@ -14,6 +14,31 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<?> handleAlreadyExistingEmails(EmailAlreadyExistsException ex) {
+        return ResponseEntity.status(400).body("Email already used");
+    }
+
+    @ExceptionHandler(BookingNotFoundException.class)
+    public ResponseEntity<?> handleBookingNotFound(BookingNotFoundException ex) {
+        return ResponseEntity.status(404).body("Booking not found");
+    }
+
+    @ExceptionHandler(SpaceNotFoundException.class)
+    public ResponseEntity<?> handleSpaceNotFound(SpaceNotFoundException ex) {
+        return ResponseEntity.status(404).body("Space not found");
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<?> handleUserNotFound(UserNotFoundException ex) {
+        return ResponseEntity.status(404).body("User not found");
+    }
+
+    @ExceptionHandler(StaffNotFoundException.class)
+    public ResponseEntity<?> handleStaffNotFound(StaffNotFoundException ex) {
+        return ResponseEntity.status(404).body("Staff not found");
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
