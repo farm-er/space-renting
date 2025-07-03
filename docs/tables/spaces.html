@@ -122,6 +122,11 @@
                                                 <td class="constraint detail">fkqarnfgv8hshhq9nho2wkq025m</td>
                                                 <td class="constraint detail"><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
+                                            <tr>
+                                                <td title="reviews.space_id references spaces.id via fkakn2anv6hx85chbdg0t076f7x"><a href='reviews.html'>reviews</a><span class='relatedKey'>.space_id</span></td>
+                                                <td class="constraint detail">fkakn2anv6hx85chbdg0t076f7x</td>
+                                                <td class="constraint detail"><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                            </tr>
                                         </table>
                                     </td>
                                     <td>
@@ -286,7 +291,7 @@
                                 <tr>
                                     <td><span id="discount">discount</span></td>
                                     <td>numeric</td>
-                                    <td>3,2</td>
+                                    <td>5,2</td>
                                     <td title='nullable'>√</td>
                                     <td title=''></td>
                                     <td>null</td>
@@ -562,16 +567,18 @@
                                     <div class="chart tab-pane active" id="oneDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
 <area shape="rect" id="node1" href="bookings.html" target="_top" title="bookings" alt="" coords="389,5,632,211">
-<area shape="rect" id="node2" href="spaces.html" target="_top" title="spaces" alt="" coords="5,91,345,776">
+<area shape="rect" id="node2" href="spaces.html" target="_top" title="spaces" alt="" coords="5,187,345,872">
+<area shape="rect" id="node3" href="reviews.html" target="_top" title="reviews" alt="" coords="430,228,591,404">
 </map>
                                         <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/spaces.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
                                     <div class="chart tab-pane " id="twodegreesDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="bookings.html" target="_top" title="bookings" alt="" coords="389,49,632,255">
-<area shape="rect" id="node2" href="staff.html" target="_top" title="staff" alt="" coords="111,5,240,93">
-<area shape="rect" id="node3" href="users.html" target="_top" title="users" alt="" coords="107,111,243,199">
-<area shape="rect" id="node4" href="spaces.html" target="_top" title="spaces" alt="" coords="5,216,345,901">
+<area shape="rect" id="node1" href="bookings.html" target="_top" title="bookings" alt="" coords="389,5,632,211">
+<area shape="rect" id="node2" href="staff.html" target="_top" title="staff" alt="" coords="111,37,240,125">
+<area shape="rect" id="node3" href="users.html" target="_top" title="users" alt="" coords="107,160,243,248">
+<area shape="rect" id="node4" href="spaces.html" target="_top" title="spaces" alt="" coords="5,275,345,960">
+<area shape="rect" id="node5" href="reviews.html" target="_top" title="reviews" alt="" coords="430,228,591,404">
 </map>
                                         <a name='diagram'><img id="twodegreesDegreeImg" src="../diagrams/tables/spaces.2degrees.png" usemap="#twoDegreesRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
