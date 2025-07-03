@@ -92,7 +92,7 @@ public class BookingController {
                 .collect(Collectors.toSet());
         Page<Booking> bookings = null;
 
-        if (roles.contains("MANAGER")) {
+        if (roles.contains("ROLE_MANAGER")) {
             bookings = bookingService.findSpacesWithFilters(
               status,
               minTotal,
@@ -102,9 +102,9 @@ public class BookingController {
               renterId,
               pageable
             );
-        } else if (roles.contains("STAFF")) {
+        } else if (roles.contains("ROLE_STAFF")) {
             bookings = bookingService.findPendingSpaces( pageable);
-        } else if (roles.contains("USER")) {
+        } else if (roles.contains("ROLE_USER")) {
 
             User user = userService.getUserByEmail( authentication.getName());
 
