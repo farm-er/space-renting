@@ -90,7 +90,9 @@ public class UserController {
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toSet());
 
-            if (roles.contains("MANAGER")) {
+            System.out.println("roles " + roles);
+
+            if (roles.contains("ROLE_MANAGER")) {
 
                 Sort sort = Sort.by(
                         sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
@@ -105,7 +107,7 @@ public class UserController {
                 return ResponseEntity.ok(users);
             }
 
-            if (roles.contains("USER")) {
+            if (roles.contains("ROLE_USER")) {
                 User user = userService.getUserByEmail( authentication.getName());
 
                 UserDTO userDTO = UserDTO.builder()
