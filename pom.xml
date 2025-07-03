@@ -101,6 +101,12 @@
 
 		<!--  -->
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-hateoas</artifactId>
+		</dependency>
+
+
 		<!-- For supabase since it's s3 compatible -->
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>

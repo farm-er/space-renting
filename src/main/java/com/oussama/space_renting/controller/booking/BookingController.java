@@ -1,6 +1,9 @@
 package com.oussama.space_renting.controller.booking;
 
 
+import com.oussama.space_renting.dto.booking.BookingDTO;
+import com.oussama.space_renting.dto.booking.CreateBookingDTO;
+import com.oussama.space_renting.dto.space.CreateSpaceDTO;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.model.booking.Booking;
 import com.oussama.space_renting.model.booking.BookingStatus;
@@ -14,20 +17,22 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -90,10 +95,10 @@ public class BookingController {
         Set<String> roles = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
-        Page<Booking> bookings = null;
+        Page<BookingDTO> bookings = null;
 
         if (roles.contains("ROLE_MANAGER")) {
-            bookings = bookingService.findSpacesWithFilters(
+            bookings = bookingService.findBookingsWithFilters(
               status,
               minTotal,
               maxTotal,
@@ -101,36 +106,151 @@ public class BookingController {
               spaceId,
               renterId,
               pageable
-            );
+            ).map( booking -> BookingDTO.builder()
+                    .id( booking.getId())
+                    .createdAt( booking.getCreatedAt())
+                    .acceptedAt( booking.getAcceptedAt())
+                    .cancelledAt( booking.getCancelledAt())
+                    .cancellationReason( booking.getCancellationReason())
+                    .startTime( booking.getStartTime())
+                    .endTime( booking.getEndTime())
+                    .totalAmount( booking.getTotalAmount())
+                    .status( booking.getStatus())
+                    .spaceId( booking.getSpaceId())
+                    .renterId( booking.getRenterId())
+                    .ProcessedById( booking.getProcessedById())
+                    .rejectionReason( booking.getRejectionReason())
+                    .build());
         } else if (roles.contains("ROLE_STAFF")) {
-            bookings = bookingService.findPendingSpaces( pageable);
+            bookings = bookingService.findPendingBookings( pageable)
+                    .map( booking -> BookingDTO.builder()
+                            .id( booking.getId())
+                            .createdAt( booking.getCreatedAt())
+                            .acceptedAt( booking.getAcceptedAt())
+                            .cancelledAt( booking.getCancelledAt())
+                            .cancellationReason( booking.getCancellationReason())
+                            .startTime( booking.getStartTime())
+                            .endTime( booking.getEndTime())
+                            .totalAmount( booking.getTotalAmount())
+                            .status( booking.getStatus())
+                            .spaceId( booking.getSpaceId())
+                            .renterId( booking.getRenterId())
+                            .ProcessedById( booking.getProcessedById())
+                            .rejectionReason( booking.getRejectionReason())
+                            .build());
+
         } else if (roles.contains("ROLE_USER")) {
 
             User user = userService.getUserByEmail( authentication.getName());
 
-            if (!user.getId().equals( renterId)) {
-                ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You can't get another user's bookings");
-            }
+            bookings = bookingService.findBookingsByRenterId( user.getId(), pageable)
+                    .map( booking -> BookingDTO.builder()
+                            .id( booking.getId())
+                            .createdAt( booking.getCreatedAt())
+                            .acceptedAt( booking.getAcceptedAt())
+                            .cancelledAt( booking.getCancelledAt())
+                            .cancellationReason( booking.getCancellationReason())
+                            .startTime( booking.getStartTime())
+                            .endTime( booking.getEndTime())
+                            .totalAmount( booking.getTotalAmount())
+                            .status( booking.getStatus())
+                            .spaceId( booking.getSpaceId())
+                            .renterId( booking.getRenterId())
+                            .ProcessedById( booking.getProcessedById())
+                            .rejectionReason( booking.getRejectionReason())
+                            .build());
 
-            bookings = bookingService.findSpacesByRenterId( renterId, pageable);
+            bookings.stream().forEach(System.out::println);
+        } else {
+            return ResponseEntity.status( HttpStatus.UNAUTHORIZED).body("Unauthorized access");
         }
 
 
         return ResponseEntity.ok( bookings);
     }
 
+    @Operation(
+            summary = "Book a space",
+            description = "space booking",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Returns the booking info"),
+                    @ApiResponse(responseCode = "500", description = "internal server error"),
+            }
+    )
+    @PostMapping
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> bookSpace(
+            @Valid @RequestBody CreateBookingDTO createBookingDTO,
+            Authentication authentication
+    ) {
 
+        String email = authentication.getName();
+
+        User user = userService.getUserByEmail( email);
+        Space space = spaceService.getSpaceById( createBookingDTO.getSpaceId());
+
+        long hours = Duration.between(
+                createBookingDTO.getStartTime(),
+                createBookingDTO.getEndTime()
+        ).toHours();
+
+        Booking booking = Booking.builder()
+                .startTime( createBookingDTO.getStartTime())
+                .endTime( createBookingDTO.getEndTime())
+                .renter( user)
+                .space( space)
+                .totalAmount( BigDecimal.valueOf(hours).multiply( space.getPricePerHour()))
+                .status( BookingStatus.PENDING)
+                .build();
+
+        Booking savedBooking = bookingService.save( booking);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedBooking);
+    }
+
+
+
+    @PostMapping("/cancel/{bookingId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> cancelBooking(
+            @PathVariable UUID bookingId,
+            @Parameter(description = "Sort direction (asc or desc)")
+            @RequestParam(required = true) String cancellationReason,
+            Authentication authentication
+    ) {
+
+        String email = authentication.getName();
+
+        System.out.println("email: "+email);
+
+        if (!userService.existsByEmail( email)) {
+            return ResponseEntity.status( HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+
+        Booking booking = bookingService.getBookingById( bookingId);
+
+        booking.setCancelledAt( LocalDateTime.now());
+        booking.setStatus( BookingStatus.CANCELLED);
+        booking.setCancellationReason( cancellationReason);
+
+        Booking savedBooking = bookingService.save( booking);
+
+        return ResponseEntity.ok("booking cancelled successfully");
+    }
 
 
     private final BookingService bookingService;
     private final UserService userService;
+    private final SpaceService spaceService;
 
     public BookingController(
             BookingService bookingService,
-            UserService userService
+            UserService userService,
+            SpaceService spaceService
     ) {
         this.bookingService = bookingService;
         this.userService = userService;
+        this.spaceService = spaceService;
     }
 
 }

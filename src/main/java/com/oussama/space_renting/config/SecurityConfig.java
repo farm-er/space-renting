@@ -37,15 +37,6 @@ import java.util.List;
 @EnableMethodSecurity( prePostEnabled = true)
 public class SecurityConfig {
 
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
-
-    @Autowired
-    private CustomStaffDetailsService staffDetailsService;
-
     /*
      * Password encoder with Bcrypt
      * Using 12 rounds for now
@@ -163,4 +154,18 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomUserDetailsService userDetailsService;
+    private final CustomStaffDetailsService staffDetailsService;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                          CustomUserDetailsService userDetailsService,
+                          CustomStaffDetailsService staffDetailsService) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.userDetailsService = userDetailsService;
+        this.staffDetailsService = staffDetailsService;
+    }
+
 }

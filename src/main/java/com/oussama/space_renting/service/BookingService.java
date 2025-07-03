@@ -1,5 +1,7 @@
 package com.oussama.space_renting.service;
 
+import com.oussama.space_renting.exception.BookingNotFoundException;
+import com.oussama.space_renting.exception.StaffNotFoundException;
 import com.oussama.space_renting.model.booking.Booking;
 import com.oussama.space_renting.model.booking.BookingStatus;
 import com.oussama.space_renting.repository.BookingRepository;
@@ -17,7 +19,7 @@ import java.util.UUID;
 public class BookingService  {
 
 
-    public Page<Booking> findSpacesWithFilters(
+    public Page<Booking> findBookingsWithFilters(
             BookingStatus status,
             BigDecimal minTotal,
             BigDecimal maxTotal,
@@ -55,12 +57,21 @@ public class BookingService  {
     }
 
 
-    public Page<Booking> findSpacesByRenterId( UUID id, Pageable pageable) {
+    public Page<Booking> findBookingsByRenterId( UUID id, Pageable pageable) {
         return bookingRepository.findAll( BookingSpecification.hasRenter( id), pageable);
     }
 
-    public Page<Booking> findPendingSpaces( Pageable pageable) {
+    public Page<Booking> findPendingBookings( Pageable pageable) {
         return bookingRepository.findAll( BookingSpecification.hasStatus( BookingStatus.PENDING), pageable);
+    }
+
+    public Booking getBookingById( UUID id) {
+        return bookingRepository.findById( id)
+                .orElseThrow( () -> new BookingNotFoundException("Booking not found with id: " + id));
+    }
+
+    public Booking save( Booking booking) {
+        return bookingRepository.save( booking);
     }
 
     private final BookingRepository bookingRepository;

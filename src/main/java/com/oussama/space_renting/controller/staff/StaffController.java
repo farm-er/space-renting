@@ -133,7 +133,6 @@ public class StaffController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteStaff(
             @PathVariable UUID id,
-            @RequestBody Map<String, String> updates,
             Authentication authentication
     ) {
 
@@ -205,12 +204,12 @@ public class StaffController {
 
             if (staff.getRole() == StaffRole.MANAGER) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body("Can't suspend manager account");
+                        .body("Can't activate manager account");
             }
 
             staffService.updateStatus( staff.getId(), StaffStatus.ACTIVE);
 
-            return ResponseEntity.ok("Staff suspended successfully");
+            return ResponseEntity.ok("Staff activated successfully");
 
         } catch ( IllegalArgumentException e ) {
             return ResponseEntity.badRequest()
