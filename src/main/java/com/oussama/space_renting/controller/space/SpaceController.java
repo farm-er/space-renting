@@ -17,6 +17,7 @@ import com.oussama.space_renting.service.SpaceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.data.domain.*;
@@ -30,10 +31,8 @@ import jakarta.validation.Valid;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -51,6 +50,7 @@ public class SpaceController {
             }
     )
     @GetMapping
+    @SecurityRequirements(value = {})
     public ResponseEntity<?> getSpaces(
             @Parameter(description = "Address to search for (partial match)")
             @RequestParam(required = false) String address,
@@ -111,11 +111,14 @@ public class SpaceController {
 
         // Create pageable object
         Pageable pageable = PageRequest.of(page, size, sort);
+        boolean isManager = false;
+        if (authentication != null) {
+            isManager = authentication.getAuthorities().stream()
+                    .anyMatch(authority ->
+                            authority.getAuthority().equals("ROLE_MANAGER")
+                    );
+        }
 
-        boolean isManager = authentication.getAuthorities().stream()
-                .anyMatch(authority ->
-                        authority.getAuthority().equals("ROLE_MANAGER")
-                );
 
 
         Page<Space> spaces = spaceService.findSpacesWithFilters(
@@ -228,11 +231,21 @@ public class SpaceController {
                 switch (key) {
                     case "name" -> space.setName( (String) value);
                     case "description" -> space.setDescription( (String) value);
-                    case "amenities" -> space.setAmenities((Set<Amenity>) value);
+                    case "amenities" -> {
+                        List<?> amenityIdsRaw = (List<?>) value;
+                        Set<Amenity> amenities = amenityIdsRaw.stream()
+                                .map(Object::toString)
+                                .map( Amenity::valueOf)
+                                .collect(Collectors.toSet());
+
+                        space.setAmenities( amenities);
+                    }
+
+
                     case "pricePerHour" -> space.setPricePerHour((BigDecimal) value);
-                    case "discount" -> space.setDiscount((BigDecimal) value);
-                    case "area" -> space.setArea((BigDecimal) value);
-                    case "capacity" -> space.setCapacity((Integer) value);
+                    case "discount" -> space.setDiscount( new BigDecimal( value.toString()));
+                    case "area" -> space.setArea(new BigDecimal( value.toString()));
+                    case "capacity" -> space.setCapacity( Integer.valueOf( value.toString()));
                 }
             });
 
