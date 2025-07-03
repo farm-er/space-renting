@@ -4,6 +4,7 @@ package com.oussama.space_renting.controller.booking;
 import com.oussama.space_renting.dto.booking.BookingDTO;
 import com.oussama.space_renting.dto.booking.CreateBookingDTO;
 import com.oussama.space_renting.dto.space.CreateSpaceDTO;
+import com.oussama.space_renting.model.Staff.Staff;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.model.booking.Booking;
 import com.oussama.space_renting.model.booking.BookingStatus;
@@ -12,6 +13,7 @@ import com.oussama.space_renting.model.space.Space;
 import com.oussama.space_renting.model.space.SpaceType;
 import com.oussama.space_renting.service.BookingService;
 import com.oussama.space_renting.service.SpaceService;
+import com.oussama.space_renting.service.StaffService;
 import com.oussama.space_renting.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -109,7 +111,7 @@ public class BookingController {
             ).map( booking -> BookingDTO.builder()
                     .id( booking.getId())
                     .createdAt( booking.getCreatedAt())
-                    .acceptedAt( booking.getAcceptedAt())
+                    .acceptedAt( booking.getProcessedAt())
                     .cancelledAt( booking.getCancelledAt())
                     .cancellationReason( booking.getCancellationReason())
                     .startTime( booking.getStartTime())
@@ -126,7 +128,7 @@ public class BookingController {
                     .map( booking -> BookingDTO.builder()
                             .id( booking.getId())
                             .createdAt( booking.getCreatedAt())
-                            .acceptedAt( booking.getAcceptedAt())
+                            .acceptedAt( booking.getProcessedAt())
                             .cancelledAt( booking.getCancelledAt())
                             .cancellationReason( booking.getCancellationReason())
                             .startTime( booking.getStartTime())
@@ -147,7 +149,7 @@ public class BookingController {
                     .map( booking -> BookingDTO.builder()
                             .id( booking.getId())
                             .createdAt( booking.getCreatedAt())
-                            .acceptedAt( booking.getAcceptedAt())
+                            .acceptedAt( booking.getProcessedAt())
                             .cancelledAt( booking.getCancelledAt())
                             .cancellationReason( booking.getCancellationReason())
                             .startTime( booking.getStartTime())
@@ -214,7 +216,7 @@ public class BookingController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> cancelBooking(
             @PathVariable UUID bookingId,
-            @Parameter(description = "Sort direction (asc or desc)")
+            @Parameter(description = "Cancellation reason")
             @RequestParam(required = true) String cancellationReason,
             Authentication authentication
     ) {
@@ -239,18 +241,73 @@ public class BookingController {
     }
 
 
+    @PostMapping("/reject/{bookingId}")
+    @PreAuthorize("hasRole('STAFF')")
+    public ResponseEntity<?> acceptBooking(
+            @PathVariable UUID bookingId,
+            @Parameter(description = "rejection reason")
+            @RequestParam(required = true) String rejectionReason,
+            Authentication authentication
+    ) {
+
+        String email = authentication.getName();
+
+
+        Staff staff = staffService.getStaffByEmail( email);
+
+        Booking booking = bookingService.getBookingById( bookingId);
+
+        booking.setProcessedBy( staff);
+        booking.setProcessedAt( LocalDateTime.now());
+        booking.setStatus( BookingStatus.REJECTED);
+        booking.setRejectionReason( rejectionReason);
+
+        Booking savedBooking = bookingService.save( booking);
+
+        return ResponseEntity.ok("booking rejected successfully");
+    }
+
+
+    @PostMapping("/accept/{bookingId}")
+    @PreAuthorize("hasRole('STAFF')")
+    public ResponseEntity<?> rejectBooking(
+            @PathVariable UUID bookingId,
+            @Parameter(description = "Sort direction (asc or desc)")
+            @RequestParam(required = true) String rejectionReason,
+            Authentication authentication
+    ) {
+
+        String email = authentication.getName();
+
+
+        Staff staff = staffService.getStaffByEmail( email);
+
+        Booking booking = bookingService.getBookingById( bookingId);
+
+        booking.setProcessedBy( staff);
+        booking.setProcessedAt( LocalDateTime.now());
+        booking.setStatus( BookingStatus.BOOKED);
+
+        Booking savedBooking = bookingService.save( booking);
+
+        return ResponseEntity.ok("booking accepted successfully");
+    }
+
     private final BookingService bookingService;
     private final UserService userService;
+    private final StaffService staffService;
     private final SpaceService spaceService;
 
     public BookingController(
             BookingService bookingService,
             UserService userService,
+            StaffService staffService,
             SpaceService spaceService
     ) {
         this.bookingService = bookingService;
         this.userService = userService;
         this.spaceService = spaceService;
+        this.staffService = staffService;
     }
 
 }

@@ -53,8 +53,8 @@ public class Booking {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "accepted_at")
-    private LocalDateTime acceptedAt;
+    @Column(name = "processed_at")
+    private LocalDateTime processedAt;
 
     @Column(name = "cancelled_at")
     private LocalDateTime cancelledAt;
