@@ -91,6 +91,16 @@ public class BookingService  {
 
         return bookingRepository.exists( spec);
     }
+
+    public boolean existsBookingsForSpaceRentedBy( UUID spaceId,  UUID renterId) {
+
+        Specification<Booking> spec = BookingSpecification.hasRenter(renterId);
+
+        spec = spec.and( BookingSpecification.hasSpace( spaceId));
+
+        return bookingRepository.exists( spec);
+    }
+
     /*
      * check overlapping bookings ofr a specific space
      */
