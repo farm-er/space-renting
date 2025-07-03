@@ -110,7 +110,8 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**",
                                 "/favicon.ico",
-                                "/v3/api-docs/swagger-config"
+                                "/v3/api-docs/swagger-config",
+                                "/api/v1/spaces"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
