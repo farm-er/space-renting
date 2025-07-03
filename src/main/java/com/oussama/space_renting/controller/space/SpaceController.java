@@ -118,6 +118,8 @@ public class SpaceController {
                         authority.getAuthority().equals("ROLE_MANAGER")
                 );
 
+        System.out.println("is manager is: "+isManager);
+
         Page<Space> spaces = spaceService.findSpacesWithFilters(
                 address, amenity, minPrice, maxPrice, minArea, maxArea,
                 minCapacity, maxCapacity, city, country, type, availableOnly, !isManager, pageable

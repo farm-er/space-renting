@@ -12,8 +12,8 @@
          <column autoUpdated="false" defaultValue="null" digits="6" id="7" name="start_time" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="status" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="2" id="9" name="total_amount" nullable="false" remarks="" size="10" type="numeric" typeCode="2"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="accepted_by" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
-            <parent column="id" foreignKey="fk9h2wg6hjl0b949bslp745jhoj" implied="false" onDeleteCascade="false" schema="public" table="staff"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="processed_by" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="fkji0yqqxu0j4kd1jbi7kwj9eac" implied="false" onDeleteCascade="false" schema="public" table="staff"/>
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="renter_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
             <parent column="id" foreignKey="fkhi6uutgints5fj9cj244ecysh" implied="false" onDeleteCascade="false" schema="public" table="users"/>
@@ -59,7 +59,7 @@
       </table>
       <table name="staff" remarks="" schema="public" type="TABLE">
          <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
-            <child column="accepted_by" foreignKey="fk9h2wg6hjl0b949bslp745jhoj" implied="false" onDeleteCascade="false" schema="public" table="bookings"/>
+            <child column="processed_by" foreignKey="fkji0yqqxu0j4kd1jbi7kwj9eac" implied="false" onDeleteCascade="false" schema="public" table="bookings"/>
          </column>
          <column autoUpdated="false" defaultValue="null" digits="6" id="1" name="created_at" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="email" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>

@@ -1,0 +1,73 @@
+package com.oussama.space_renting.service;
+
+import com.oussama.space_renting.model.booking.Booking;
+import com.oussama.space_renting.model.booking.BookingStatus;
+import com.oussama.space_renting.repository.BookingRepository;
+import com.oussama.space_renting.specification.BookingSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+
+@Service
+public class BookingService  {
+
+
+    public Page<Booking> findSpacesWithFilters(
+            BookingStatus status,
+            BigDecimal minTotal,
+            BigDecimal maxTotal,
+            UUID staffId,
+            UUID spaceId,
+            UUID renterId,
+            Pageable pageable
+    ) {
+
+
+        Specification<Booking> spec = (root, query, cb) -> null;
+
+
+        if (minTotal != null && maxTotal != null) {
+            spec = spec.and(BookingSpecification.hasTotalAmountBetween(minTotal, maxTotal));
+        }
+
+        if (status != null) {
+            spec = spec.and(BookingSpecification.hasStatus(status));
+        }
+
+        if (staffId != null) {
+            spec = spec.and(BookingSpecification.isProcessedBy( staffId));
+        }
+
+        if (spaceId != null) {
+            spec = spec.and(BookingSpecification.hasSpace( spaceId));
+        }
+
+        if (renterId != null) {
+            spec = spec.and(BookingSpecification.hasRenter( renterId));
+        }
+
+        return bookingRepository.findAll(spec, pageable);
+    }
+
+
+    public Page<Booking> findSpacesByRenterId( UUID id, Pageable pageable) {
+        return bookingRepository.findAll( BookingSpecification.hasRenter( id), pageable);
+    }
+
+    public Page<Booking> findPendingSpaces( Pageable pageable) {
+        return bookingRepository.findAll( BookingSpecification.hasStatus( BookingStatus.PENDING), pageable);
+    }
+
+    private final BookingRepository bookingRepository;
+
+    public BookingService(
+            BookingRepository bookingRepository
+    ) {
+        this.bookingRepository = bookingRepository;
+    }
+}

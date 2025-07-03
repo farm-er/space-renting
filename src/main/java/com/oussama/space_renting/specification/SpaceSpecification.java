@@ -3,13 +3,10 @@ package com.oussama.space_renting.specification;
 import com.oussama.space_renting.model.space.Amenity;
 import com.oussama.space_renting.model.space.Space;
 import com.oussama.space_renting.model.space.SpaceType;
-import jakarta.persistence.metamodel.SetAttribute;
-import jakarta.persistence.metamodel.SingularAttribute;
-import jakarta.persistence.metamodel.StaticMetamodel;
+import com.oussama.space_renting.model.space.Space_;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 // TODO: Add some null safety to those functions hahahahhah
 public class SpaceSpecification {
@@ -70,7 +67,7 @@ public class SpaceSpecification {
 
     public static Specification<Space> hasType(SpaceType type) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal( root.get(Space_.type), type);
+                criteriaBuilder.equal( root.get(Space_.spaceType), type);
     }
 
     public static Specification<Space> isAvailable() {
@@ -91,21 +88,6 @@ public class SpaceSpecification {
                 criteriaBuilder.like( root.get(Space_.country), country);
     }
 
-}
-
-
-@StaticMetamodel(Space.class)
-class Space_ {
-    public static volatile SingularAttribute<Space, BigDecimal> pricePerHour;
-    public static volatile SingularAttribute<Space, BigDecimal> area;
-    public static volatile SingularAttribute<Space, Integer> capacity;
-    public static volatile SingularAttribute<Space, String> city;
-    public static volatile SingularAttribute<Space, SpaceType> type;
-    public static volatile SingularAttribute<Space, String> country;
-    public static volatile SingularAttribute<Space, String> address;
-    public static volatile SingularAttribute<Space, Boolean> isAvailable;
-    public static volatile SingularAttribute<Space, Boolean> isActive;
-    public static volatile SetAttribute<Space, Set<Amenity>> amenities;
 }
 
 
