@@ -160,7 +160,7 @@ public class StaffController {
 
     }
 
-    @PreAuthorize("hasRole('MANAGER)")
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/suspend/{id}")
     public ResponseEntity<?> suspendStaff(
             @PathVariable UUID id,
@@ -192,7 +192,7 @@ public class StaffController {
     }
 
 
-    @PreAuthorize("hasRole('MANAGER)")
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/activate/{id}")
     public ResponseEntity<?> activateStaff(
             @PathVariable UUID id,
