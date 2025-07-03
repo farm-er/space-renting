@@ -12,16 +12,14 @@ import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.model.space.Amenity;
 import com.oussama.space_renting.model.space.Space;
 import com.oussama.space_renting.model.space.SpaceType;
+import com.oussama.space_renting.service.BookingService;
 import com.oussama.space_renting.service.SpaceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,6 +30,7 @@ import jakarta.validation.Valid;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -118,12 +117,18 @@ public class SpaceController {
                         authority.getAuthority().equals("ROLE_MANAGER")
                 );
 
-        System.out.println("is manager is: "+isManager);
 
         Page<Space> spaces = spaceService.findSpacesWithFilters(
                 address, amenity, minPrice, maxPrice, minArea, maxArea,
                 minCapacity, maxCapacity, city, country, type, availableOnly, !isManager, pageable
         );
+
+        List<Space> updatedSpaces = spaces.stream().map(space -> {
+            space.setIsAvailable( !bookingService.existsBookings( space.getId()));
+            return space;
+        }).toList();
+
+        spaces = new PageImpl<>(updatedSpaces, pageable, spaces.getTotalElements());
 
         return ResponseEntity.ok(spaces);
     }
@@ -342,11 +347,14 @@ public class SpaceController {
     }
 
     private final SpaceService spaceService;
+    private final BookingService bookingService;
 
     public SpaceController(
-            SpaceService spaceService
+            SpaceService spaceService,
+            BookingService bookingService
     ) {
         this.spaceService = spaceService;
+        this.bookingService = bookingService;
     }
 }
 

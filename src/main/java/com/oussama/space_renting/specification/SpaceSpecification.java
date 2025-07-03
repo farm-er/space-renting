@@ -1,12 +1,18 @@
 package com.oussama.space_renting.specification;
 
+import com.oussama.space_renting.model.booking.Booking;
+import com.oussama.space_renting.model.booking.Booking_;
 import com.oussama.space_renting.model.space.Amenity;
 import com.oussama.space_renting.model.space.Space;
 import com.oussama.space_renting.model.space.SpaceType;
 import com.oussama.space_renting.model.space.Space_;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 // TODO: Add some null safety to those functions hahahahhah
 public class SpaceSpecification {
@@ -71,8 +77,21 @@ public class SpaceSpecification {
     }
 
     public static Specification<Space> isAvailable() {
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.isTrue( root.get(Space_.isAvailable));
+        return (root, query, criteriaBuilder) -> {
+
+            LocalDateTime now = LocalDateTime.now();
+
+            Subquery<UUID> subquery = query.subquery(UUID.class);
+            Root<Booking> bookingRoot = subquery.from(Booking.class);
+
+            subquery.select( bookingRoot.get(Booking_.spaceId))
+                            .where(
+                                    criteriaBuilder.lessThan( bookingRoot.get(Booking_.startTime), now),
+                                    criteriaBuilder.greaterThan( bookingRoot.get(Booking_.endTime), now)
+                            );
+
+            return criteriaBuilder.not( root.get( Space_.id).in( subquery));
+        };
     }
 
     public static Specification<Space> isActive() {

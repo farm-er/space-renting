@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 
@@ -72,6 +73,37 @@ public class BookingService  {
 
     public Booking save( Booking booking) {
         return bookingRepository.save( booking);
+    }
+
+
+    /*
+     * if this space is available now
+     */
+    public boolean existsBookings( UUID spaceId) {
+
+        Specification<Booking> spec = (root, query, cb) -> null;
+
+        LocalDateTime now = LocalDateTime.now();
+
+        spec = spec.and( BookingSpecification.endAfter( now));
+        spec = spec.and( BookingSpecification.startBefore( now));
+        spec = spec.and( BookingSpecification.hasSpace( spaceId));
+
+        return bookingRepository.exists( spec);
+    }
+    /*
+     * check overlapping bookings ofr a specific space
+     */
+    public boolean existOverlappingBookings( LocalDateTime start, LocalDateTime end, UUID spaceId) {
+
+        Specification<Booking> specs = (root, query, cb) -> null;
+
+        specs = specs
+                .and(BookingSpecification.hasSpace(spaceId))
+                .and(BookingSpecification.startBefore(start))
+                .and(BookingSpecification.endAfter(end));
+
+        return bookingRepository.exists( specs);
     }
 
     private final BookingRepository bookingRepository;

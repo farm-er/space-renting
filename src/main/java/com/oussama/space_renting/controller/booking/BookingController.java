@@ -186,10 +186,27 @@ public class BookingController {
             Authentication authentication
     ) {
 
+
+        boolean isOverlapping = bookingService.existOverlappingBookings(
+                createBookingDTO.getStartTime(),
+                createBookingDTO.getEndTime(),
+                createBookingDTO.getSpaceId()
+        );
+
+        if ( isOverlapping) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("This space is already booked for the period specified");
+        }
+
         String email = authentication.getName();
 
         User user = userService.getUserByEmail( email);
         Space space = spaceService.getSpaceById( createBookingDTO.getSpaceId());
+
+        /*
+         * check if this space is booked in this time range
+         */
+
 
         long hours = Duration.between(
                 createBookingDTO.getStartTime(),
@@ -204,6 +221,17 @@ public class BookingController {
                 .totalAmount( BigDecimal.valueOf(hours).multiply( space.getPricePerHour()))
                 .status( BookingStatus.PENDING)
                 .build();
+
+        /*
+         * update available in for of the space
+         */
+
+        if ( space.getAvailableIn().isBefore( createBookingDTO.getEndTime())) {
+            space.setAvailableIn( createBookingDTO.getEndTime());
+            spaceService.save( space);
+        }
+
+
 
         Booking savedBooking = bookingService.save( booking);
 
@@ -272,8 +300,6 @@ public class BookingController {
     @PreAuthorize("hasRole('STAFF')")
     public ResponseEntity<?> rejectBooking(
             @PathVariable UUID bookingId,
-            @Parameter(description = "Sort direction (asc or desc)")
-            @RequestParam(required = true) String rejectionReason,
             Authentication authentication
     ) {
 
