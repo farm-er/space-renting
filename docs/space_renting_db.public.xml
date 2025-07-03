@@ -3,33 +3,51 @@
    <tables>
       <table name="bookings" remarks="" schema="public" type="TABLE">
          <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
-         <column autoUpdated="false" defaultValue="null" digits="6" id="1" name="accepted_at" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="cancellation_reason" nullable="true" remarks="" size="500" type="varchar" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="6" id="3" name="cancelled_at" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="6" id="4" name="created_at" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="6" id="5" name="end_time" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="rejection_reason" nullable="true" remarks="" size="500" type="varchar" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="6" id="7" name="start_time" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="status" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="2" id="9" name="total_amount" nullable="false" remarks="" size="10" type="numeric" typeCode="2"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="processed_by" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="cancellation_reason" nullable="true" remarks="" size="500" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="2" name="cancelled_at" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="3" name="created_at" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="4" name="end_time" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="5" name="processed_at" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="processed_by" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
             <parent column="id" foreignKey="fkji0yqqxu0j4kd1jbi7kwj9eac" implied="false" onDeleteCascade="false" schema="public" table="staff"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="renter_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="rejection_reason" nullable="true" remarks="" size="500" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="renter_id" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
             <parent column="id" foreignKey="fkhi6uutgints5fj9cj244ecysh" implied="false" onDeleteCascade="false" schema="public" table="users"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="12" name="space_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="space_id" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
             <parent column="id" foreignKey="fkqarnfgv8hshhq9nho2wkq025m" implied="false" onDeleteCascade="false" schema="public" table="spaces"/>
          </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="10" name="start_time" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="status" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="12" name="total_amount" nullable="false" remarks="" size="10" type="numeric" typeCode="2"/>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="bookings_pkey" unique="true">
             <column ascending="true" name="id"/>
          </index>
          <checkConstraint constraint="(((status)::text = ANY ((ARRAY['PENDING'::character varying, 'BOOKED'::character varying, 'REJECTED'::character varying, 'CANCELLED'::character varying])::text[])))" name="bookings_status_check"/>
       </table>
+      <table name="reviews" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="comment" nullable="true" remarks="" size="1000" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="2" name="created_at" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="rating" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="reviewer_id" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="fkd1isgfajhtdl8mgg29up6mofi" implied="false" onDeleteCascade="false" schema="public" table="users"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="space_id" nullable="true" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent column="id" foreignKey="fkakn2anv6hx85chbdg0t076f7x" implied="false" onDeleteCascade="false" schema="public" table="spaces"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="reviews_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <checkConstraint constraint="(((rating &lt;= 5) AND (rating &gt;= 0)))" name="reviews_rating_check"/>
+      </table>
       <table name="spaces" remarks="" schema="public" type="TABLE">
          <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
             <child column="space_id" foreignKey="fkqarnfgv8hshhq9nho2wkq025m" implied="false" onDeleteCascade="false" schema="public" table="bookings"/>
+            <child column="space_id" foreignKey="fkakn2anv6hx85chbdg0t076f7x" implied="false" onDeleteCascade="false" schema="public" table="reviews"/>
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="address" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="amenities" nullable="true" remarks="" size="255" type="varchar" typeCode="12"/>
@@ -40,7 +58,7 @@
          <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="country" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="6" id="8" name="created_at" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="description" nullable="false" remarks="" size="2000" type="varchar" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="2" id="10" name="discount" nullable="true" remarks="" size="3" type="numeric" typeCode="2"/>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="10" name="discount" nullable="true" remarks="" size="5" type="numeric" typeCode="2"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="image_urls" nullable="true" remarks="" size="255" type="varchar" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="12" name="is_active" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="13" name="is_available" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
@@ -82,6 +100,7 @@
       <table name="users" remarks="" schema="public" type="TABLE">
          <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
             <child column="renter_id" foreignKey="fkhi6uutgints5fj9cj244ecysh" implied="false" onDeleteCascade="false" schema="public" table="bookings"/>
+            <child column="reviewer_id" foreignKey="fkd1isgfajhtdl8mgg29up6mofi" implied="false" onDeleteCascade="false" schema="public" table="reviews"/>
          </column>
          <column autoUpdated="false" defaultValue="null" digits="6" id="1" name="created_at" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="email" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
