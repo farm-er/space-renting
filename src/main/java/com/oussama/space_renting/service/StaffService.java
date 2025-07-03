@@ -9,6 +9,8 @@ import com.oussama.space_renting.model.Staff.StaffRole;
 import com.oussama.space_renting.model.Staff.StaffStatus;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.repository.StaffRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +50,10 @@ public class StaffService {
 
     public boolean existsByEmail( String email) {
         return staffRepository.existsByEmail(email);
+    }
+
+    public Page<Staff> getAllStaff(Pageable pageable) {
+        return staffRepository.findAll( pageable);
     }
 
     public Staff getStaffById(UUID id) throws StaffNotFoundException{
