@@ -4,6 +4,7 @@ package com.oussama.space_renting.controller.review;
 import com.oussama.space_renting.dto.booking.BookingDTO;
 import com.oussama.space_renting.dto.booking.CreateBookingDTO;
 import com.oussama.space_renting.dto.review.CreateReviewDTO;
+import com.oussama.space_renting.dto.review.ReviewDTO;
 import com.oussama.space_renting.exception.SpaceNotFoundException;
 import com.oussama.space_renting.model.User.User;
 import com.oussama.space_renting.model.booking.Booking;
@@ -115,7 +116,15 @@ public class ReviewsController {
         Pageable pageable = PageRequest.of(page, size, sort);
 
 
-        Page<Review> reviews = reviewsService.findReviewsBySpace( spaceId, pageable);
+        Page<ReviewDTO> reviews = reviewsService.findReviewsBySpace( spaceId, pageable)
+                .map( review -> ReviewDTO.builder()
+                        .createdAt( review.getCreatedAt())
+                        .id( review.getId())
+                        .spaceId( review.getSpaceId())
+                        .reviewerId( review.getReviewerId())
+                        .comment( review.getComment())
+                        .rating( review.getRating())
+                        .build());
 
         return ResponseEntity.ok(reviews);
     }
