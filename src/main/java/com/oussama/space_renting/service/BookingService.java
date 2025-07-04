@@ -116,6 +116,31 @@ public class BookingService  {
         return bookingRepository.exists( specs);
     }
 
+    public Integer countBookedUsersBetween( LocalDateTime start, LocalDateTime end) {
+        return bookingRepository.countDistinctUsersByProcessedAtBetween(
+                start,
+                end,
+                BookingStatus.BOOKED
+        );
+    }
+
+    public BigDecimal revenueBetween( LocalDateTime start, LocalDateTime end) {
+
+        if (start==null && end==null) {
+            return bookingRepository.sumTotalRevenue( BookingStatus.BOOKED);
+        } else if (start!=null && end!=null) {
+            return bookingRepository.sumRevenueBetween(
+                    start,
+                    end,
+                    BookingStatus.BOOKED
+            );
+        } else {
+            return BigDecimal.ZERO;
+        }
+
+    }
+
+
     private final BookingRepository bookingRepository;
 
     public BookingService(

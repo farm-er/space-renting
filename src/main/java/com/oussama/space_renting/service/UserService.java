@@ -14,9 +14,11 @@ import com.oussama.space_renting.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -88,6 +90,17 @@ public class UserService {
     public User save(User user) {
         return userRepository.save(user);
     }
+
+    public Integer countAccountCreatedBetween(
+            LocalDateTime start,
+            LocalDateTime end
+    ) {
+        return userRepository.countAccountCreatedBetween(
+                start,
+                end
+        );
+    }
+
 
     private final UserRepository userRepository;
 
