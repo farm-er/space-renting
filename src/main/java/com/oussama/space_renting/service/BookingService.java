@@ -1,5 +1,6 @@
 package com.oussama.space_renting.service;
 
+import com.oussama.space_renting.dto.analytics.RevenuePerDayDTO;
 import com.oussama.space_renting.exception.BookingNotFoundException;
 import com.oussama.space_renting.exception.StaffNotFoundException;
 import com.oussama.space_renting.model.booking.Booking;
@@ -12,7 +13,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -140,6 +143,13 @@ public class BookingService  {
 
     }
 
+    public List<RevenuePerDayDTO> revenuePerDayBetween(LocalDate start, LocalDate end) {
+        return bookingRepository.findDailyRevenueBetween(
+                start.atStartOfDay(),
+                end.plusDays(1).atStartOfDay(),
+                BookingStatus.BOOKED
+        );
+    }
 
     private final BookingRepository bookingRepository;
 

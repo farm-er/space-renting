@@ -1,4 +1,4 @@
-package com.oussama.space_renting.dto;
+package com.oussama.space_renting.dto.analytics;
 
 
 import lombok.AllArgsConstructor;

@@ -1,15 +1,15 @@
 package com.oussama.space_renting.service;
 
 
-import com.oussama.space_renting.dto.AnalyticsSummaryDTO;
-import com.oussama.space_renting.model.User.User;
-import com.oussama.space_renting.repository.BookingRepository;
-import com.oussama.space_renting.repository.UserRepository;
+import com.oussama.space_renting.dto.analytics.AnalyticsSummaryDTO;
+import com.oussama.space_renting.dto.analytics.RevenuePerDayDTO;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class AnalyticsService {
@@ -82,6 +82,13 @@ public class AnalyticsService {
 
     }
 
+    public List<RevenuePerDayDTO> getRevenuePerDay(LocalDate start, LocalDate end) {
+
+        return bookingService.revenuePerDayBetween(
+                start,
+                end
+        );
+    }
 
 
     private final UserService userService;

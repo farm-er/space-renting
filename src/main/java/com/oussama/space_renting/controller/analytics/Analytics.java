@@ -1,15 +1,20 @@
-package com.oussama.space_renting.controller;
+package com.oussama.space_renting.controller.analytics;
 
 
 import com.oussama.space_renting.service.AnalyticsService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/v1/analytics")
@@ -53,7 +58,31 @@ public class Analytics {
     }
 
 
-    private AnalyticsService analyticsService;
+    @Operation(
+            summary = "gets revenue per day",
+            description = "gets revenue per day for the specified period",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Returns revenue per day"),
+                    @ApiResponse(responseCode = "500", description = "internal server error"),
+            }
+    )
+    @GetMapping("/revenue")
+    @PreAuthorize("hasRole('MANAGER')")
+    ResponseEntity<?> getRevenuePerDay(
+            @Parameter(description = "Start of time range")
+            @RequestParam(required = true) LocalDate startDate,
+
+            @Parameter(description = "End of time range")
+            @RequestParam(required = true) LocalDate endDate
+    ) {
+
+        return ResponseEntity.ok(analyticsService.getRevenuePerDay(
+                startDate,
+                endDate
+        ));
+    }
+
+    private final AnalyticsService analyticsService;
 
     public Analytics(
             AnalyticsService analyticsService
