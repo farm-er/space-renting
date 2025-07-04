@@ -3,6 +3,7 @@ package com.oussama.space_renting.service;
 
 import com.oussama.space_renting.dto.analytics.AnalyticsSummaryDTO;
 import com.oussama.space_renting.dto.analytics.DailyActiveUsersDTO;
+import com.oussama.space_renting.dto.analytics.DailyNewUsersDTO;
 import com.oussama.space_renting.dto.analytics.RevenuePerDayDTO;
 import org.springframework.stereotype.Service;
 
@@ -98,6 +99,15 @@ public class AnalyticsService {
                 end
         );
     }
+
+    public List<DailyNewUsersDTO> getDailyNewUsers(LocalDate start, LocalDate end) {
+
+        return userService.dailyNewUsersBetween(
+                start,
+                end
+        );
+    }
+
 
     private final UserService userService;
     private final BookingService bookingService;

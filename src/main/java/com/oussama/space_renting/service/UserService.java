@@ -1,6 +1,7 @@
 package com.oussama.space_renting.service;
 
 
+import com.oussama.space_renting.dto.analytics.DailyNewUsersDTO;
 import com.oussama.space_renting.dto.staff.StaffDTO;
 import com.oussama.space_renting.dto.staff.StaffRegisterRequestDTO;
 import com.oussama.space_renting.dto.user.UserDTO;
@@ -18,7 +19,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -101,6 +104,12 @@ public class UserService {
         );
     }
 
+    public List<DailyNewUsersDTO> dailyNewUsersBetween(LocalDate start, LocalDate end) {
+        return userRepository.findDailyNewUsersBetween(
+                start.atStartOfDay(),
+                end.plusDays(1).atStartOfDay()
+        );
+    }
 
     private final UserRepository userRepository;
 
