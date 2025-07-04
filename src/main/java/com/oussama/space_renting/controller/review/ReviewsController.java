@@ -77,11 +77,18 @@ public class ReviewsController {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Review> reviews = reviewsService.findReviewsWithRatingRange(
+        Page<ReviewDTO> reviews = reviewsService.findReviewsWithRatingRange(
             minRating,
                 maxRating,
                 pageable
-        );
+        ).map( review -> ReviewDTO.builder()
+                .createdAt( review.getCreatedAt())
+                .id( review.getId())
+                .spaceId( review.getSpaceId())
+                .reviewerId( review.getReviewerId())
+                .comment( review.getComment())
+                .rating( review.getRating())
+                .build());
 
         return ResponseEntity.ok( reviews);
     }
