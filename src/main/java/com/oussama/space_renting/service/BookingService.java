@@ -1,5 +1,6 @@
 package com.oussama.space_renting.service;
 
+import com.oussama.space_renting.dto.analytics.DailyActiveUsersDTO;
 import com.oussama.space_renting.dto.analytics.RevenuePerDayDTO;
 import com.oussama.space_renting.exception.BookingNotFoundException;
 import com.oussama.space_renting.exception.StaffNotFoundException;
@@ -145,6 +146,15 @@ public class BookingService  {
 
     public List<RevenuePerDayDTO> revenuePerDayBetween(LocalDate start, LocalDate end) {
         return bookingRepository.findDailyRevenueBetween(
+                start.atStartOfDay(),
+                end.plusDays(1).atStartOfDay(),
+                BookingStatus.BOOKED
+        );
+    }
+
+
+    public List<DailyActiveUsersDTO> dailyActiveUsersBetween(LocalDate start, LocalDate end) {
+        return bookingRepository.countDailyDistinctUsersByProcessedAtBetween(
                 start.atStartOfDay(),
                 end.plusDays(1).atStartOfDay(),
                 BookingStatus.BOOKED

@@ -82,6 +82,31 @@ public class Analytics {
         ));
     }
 
+
+    @Operation(
+            summary = "gets daily active users",
+            description = "gets active that booked per day for the specified period",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Returns revenue per day"),
+                    @ApiResponse(responseCode = "500", description = "internal server error"),
+            }
+    )
+    @GetMapping("/activity")
+    @PreAuthorize("hasRole('MANAGER')")
+    ResponseEntity<?> getDailyActiveUsers(
+            @Parameter(description = "Start of time range")
+            @RequestParam(required = true) LocalDate startDate,
+
+            @Parameter(description = "End of time range")
+            @RequestParam(required = true) LocalDate endDate
+    ) {
+
+        return ResponseEntity.ok(analyticsService.getDailyActiveUsers(
+                startDate,
+                endDate
+        ));
+    }
+
     private final AnalyticsService analyticsService;
 
     public Analytics(

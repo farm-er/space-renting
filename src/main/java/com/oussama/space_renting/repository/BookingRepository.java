@@ -1,5 +1,6 @@
 package com.oussama.space_renting.repository;
 
+import com.oussama.space_renting.dto.analytics.DailyActiveUsersDTO;
 import com.oussama.space_renting.dto.analytics.RevenuePerDayDTO;
 import com.oussama.space_renting.model.booking.Booking;
 import com.oussama.space_renting.model.booking.BookingStatus;
@@ -47,13 +48,26 @@ public interface BookingRepository extends JpaRepository<Booking, UUID>, JpaSpec
 //    );
 
 
-    @Query("SELECT DATE(b.processedAt) as date, SUM(b.totalAmount) as total " +
+    @Query("SELECT new com.oussama.space_renting.dto.analytics.RevenuePerDayDTO(cast(b.processedAt as LocalDate), SUM(b.totalAmount)) " +
             "FROM Booking b " +
             "WHERE b.status = :status " +
             "AND b.processedAt BETWEEN :start AND :end " +
-            "GROUP BY DATE(b.processedAt) " +
-            "ORDER BY DATE(b.processedAt)")
+            "GROUP BY cast(b.processedAt as LocalDate) " +
+            "ORDER BY cast(b.processedAt as LocalDate)")
     List<RevenuePerDayDTO> findDailyRevenueBetween(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            @Param("status") BookingStatus status
+    );
+
+
+    @Query("SELECT new com.oussama.space_renting.dto.analytics.DailyActiveUsersDTO(cast(b.processedAt as LocalDate), COUNT(DISTINCT b.renterId)) "+
+            "FROM Booking b "+
+            "WHERE b.status = :status AND b.processedAt BETWEEN :start AND :end "+
+            "GROUP BY cast(b.processedAt as LocalDate) " +
+            "ORDER BY cast(b.processedAt as LocalDate)"
+    )
+    List<DailyActiveUsersDTO> countDailyDistinctUsersByProcessedAtBetween(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
             @Param("status") BookingStatus status
